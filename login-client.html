@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Samba Voyage | Mon Espace Assuré</title>
+    <style>
+        :root { --samba-blue: #0070bb; --samba-green: #39b54a; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; margin: 0; height: 100vh; display: flex; 
+            justify-content: center; align-items: center; 
+            background: #f0f4f8; 
+        }
+        .login-card {
+            background: white; padding: 40px; border-radius: 16px; width: 350px; text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 5px solid var(--samba-green);
+        }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .btn-login { width: 100%; padding: 12px; background: var(--samba-green); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .toggle-link { margin-top: 20px; display: block; color: var(--samba-green); text-decoration: none; font-size: 13px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <img src="Logo Samba.jpeg" width="120">
+        <h2 id="form-title">Espace Client</h2>
+        <form onsubmit="gererAuth(event)">
+            <div id="signup-fields" style="display:none;">
+                <input type="text" id="fullname" placeholder="Nom complet (selon passeport)">
+                <input type="text" id="policy" placeholder="N° de Police (ex: SV-4521)">
+            </div>
+            <input type="email" id="email" placeholder="Votre Email" required>
+            <input type="password" id="pass" placeholder="Mot de passe" required>
+            <button type="submit" class="btn-login" id="btn-text">ACCÉDER À MES DOCUMENTS</button>
+        </form>
+        <a class="toggle-link" onclick="basculerVue()" id="toggle-text">Première connexion ? Activer mon compte</a>
+    </div>
+
+    <script>
+        let estInscription = false;
+        function basculerVue() {
+            estInscription = !estInscription;
+            document.getElementById('form-title').innerText = estInscription ? "Activation Espace Assuré" : "Espace Client";
+            document.getElementById('signup-fields').style.display = estInscription ? "block" : "none";
+            document.getElementById('btn-text').innerText = estInscription ? "ACTIVER MON ESPACE" : "ACCÉDER À MES DOCUMENTS";
+            document.getElementById('toggle-text').innerText = estInscription ? "Déjà un compte ? Se connecter" : "Première connexion ? Activer mon compte";
+        }
+        function gererAuth(event) { event.preventDefault(); window.location.href = 'espace-client.html'; }
+    </script>
+</body>
+</html>
