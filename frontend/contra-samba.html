@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Contrat d'Assurance Voyage | SAMBA Voyage</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
+        .a4-page {
+            background: white; width: 800px; margin: 0 auto; padding: 40px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); position: relative;
+        }
+        .header-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .logo-samba { width: 120px; }
+        .contract-title { text-align: center; }
+        .contract-title h2 { margin: 0; font-size: 18px; text-transform: uppercase; }
+        .contract-title p { margin: 5px 0; font-size: 12px; color: #666; font-style: italic; }
+        .serial-number { color: #e11d48; font-weight: bold; font-size: 18px; text-align: right; }
+
+        .form-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .form-table td { border: 1px solid #475569; padding: 10px; font-size: 12px; vertical-align: top; }
+        .section-label { background: #f1f5f9; font-weight: bold; width: 150px; text-transform: uppercase; }
+
+        .input-line { border: none; border-bottom: 1px dotted #94a3b8; width: 100%; outline: none; padding: 2px; background: transparent; font-family: inherit; }
+
+        .footer-legal { margin-top: 30px; font-size: 10px; text-align: center; color: #475569; line-height: 1.4; border-top: 1px solid #e2e8f0; padding-top: 15px; }
+        .signature-section { display: flex; justify-content: space-between; margin-top: 40px; padding: 0 20px; }
+        .signature-box { border: 1px solid #cbd5e1; width: 200px; height: 80px; margin-top: 10px; border-radius: 4px; }
+
+        .btn-container { text-align: center; margin-top: 20px; display: flex; justify-content: center; gap: 15px; }
+        .btn-print { padding: 12px 25px; background: #64748b; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-validate { padding: 12px 25px; background: #39b54a; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+        @media print { .no-print { display: none; } body { background: white; padding: 0; } .a4-page { box-shadow: none; border: none; } }
+    </style>
+</head>
+<body>
+
+    <div class="a4-page">
+        <table class="header-table">
+            <tr>
+                <td width="20%"><img src="Logo Samba.jpeg" class="logo-samba"></td>
+                <td class="contract-title">
+                    <h2>Contrat Assurance Voyage : SAMBA VOYAGE</h2>
+                    <p>Contrat régi par le Code des assurances CIMA</p>
+                    <div style="font-weight: bold; margin-top: 10px;">CONDITIONS PARTICULIERES</div>
+                </td>
+                <td width="20%" class="serial-number" id="police-display"></td>
+            </tr>
+        </table>
+
+        <table class="form-table">
+            <tr>
+                <td class="section-label">Couverture</td>
+                <td>
+                    Zone de couverture : 
+                    <select id="zone_select" class="input-line" style="width: 200px;" onchange="mettreAJourZone()">
+                        <option value="1">Zone 1 : GABON</option>
+                        <option value="2">Zone 2 : AFRIQUE (CIMA)</option>
+                        <option value="3">Zone 3 : FRANCE / EUROPE</option>
+                    </select><br><br>
+                    Destination précise : 
+                    <select id="destination_select" class="input-line" style="width: 200px;">
+                        <option value="Gabon">Gabon</option>
+                    </select><br><br>
+                    Date d'effet : <input type="date" id="date_effet" class="input-line" style="width: 120px;"> 
+                    Date d'échéance : <input type="date" id="date_echeance" class="input-line" style="width: 120px;">
+                </td>
+            </tr>
+            <tr>
+                <td class="section-label">Souscripteur</td>
+                <td>
+                    Nom / Prénom : <input type="text" id="nom_souscripteur" class="input-line"><br><br>
+                    N° Passeport : <input type="text" id="num_passeport" class="input-line" style="width: 200px;"><br><br>
+                    Date de Naissance : <input type="date" id="date_naissance" class="input-line" style="width: 150px;" onchange="verifierAge()">
+                    <span id="age_error" style="color: red; font-size: 10px; margin-left: 10px;"></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="section-label">Prestataire</td>
+                <td>
+                    <strong>Africa First Assist (AFA)</strong><br>
+                    Assistance 24h/24 et 7j/7 en cas de sinistre.
+                </td>
+            </tr>
+            <tr>
+                <td class="section-label">Cotisations TTC</td>
+                <td>
+                    Prime Nette : <input type="text" id="prime_nette" class="input-line" style="width: 100px;" readonly> FCFA<br><br>
+                    <strong>Total TTC : <input type="text" id="total_ttc" class="input-line" style="width: 100px; font-weight: bold;" readonly> FCFA</strong>
+                    <p style="font-size: 9px; color: #666;">(Basé sur les tarifs de cession : 41€ Zone 2 / 80€ Zone 3)</p>
+                </td>
+            </tr>
+        </table>
+
+        <div class="signature-section">
+            <div><strong>Le Souscripteur</strong><div class="signature-box"></div></div>
+            <div style="text-align: center; font-size: 11px; color: #64748b; margin-top: 20px;">
+                Feuillet 1: SAMB'A | Feuillet 2: AFA | Feuillet 3: ASSURÉ
+            </div>
+            <div><strong>L'Assureur (Samba)</strong><div class="signature-box"></div></div>
+        </div>
+
+        <div class="footer-legal">
+            <strong>SAMB'A ASSURANCES GABON S.A.</strong> - Capital 610 000 000 FCFA<br>
+            Représentée par <strong>Dr. Crépin Magloire Andrew GWODOG</strong><br>
+            Quartier Louis, Immeuble Zébra, Libreville
+        </div>
+    </div>
+
+    <div class="btn-container no-print">
+        <button onclick="window.print()" class="btn-print">Imprimer</button>
+        <button onclick="validerContrat()" class="btn-validate">Valider et Enregistrer</button>
+    </div>
+
+    <script>
+        function mettreAJourZone() {
+            const zone = document.getElementById('zone_select').value;
+            const destSelect = document.getElementById('destination_select');
+            const primeField = document.getElementById('prime_nette');
+            const totalField = document.getElementById('total_ttc');
+            
+            destSelect.innerHTML = '';
+            
+            if (zone === "2") {
+                const pays = ["Bénin", "Burkina Faso", "Cameroun", "Centrafrique", "Congo", "Côte d'Ivoire", "Guinée Bissau", "Mali", "Niger", "Sénégal", "Tchad", "Togo"];
+                pays.forEach(p => destSelect.innerHTML += `<option value="${p}">${p}</option>`);
+                primeField.value = 27000; // ~41€
+                totalField.value = 27000;
+            } else if (zone === "3") {
+                destSelect.innerHTML = `<option value="France">France / Europe</option>`;
+                primeField.value = 52500; // ~80€
+                totalField.value = 52500;
+            } else {
+                destSelect.innerHTML = `<option value="Gabon">Gabon</option>`;
+                primeField.value = 15000;
+                totalField.value = 15000;
+            }
+        }
+
+        function verifierAge() {
+            const birthDate = new Date(document.getElementById('date_naissance').value);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+
+            const errorSpan = document.getElementById('age_error');
+            if (age > 60) {
+                errorSpan.innerText = "Âge limite de souscription (60 ans) dépassé !";
+                return false;
+            } else {
+                errorSpan.innerText = "";
+                return true;
+            }
+        }
+
+        async function validerContrat() {
+    // ... tes vérifications d'âge ...
+
+    const donnees = {
+        souscripteur_nom: document.getElementById('nom_souscripteur').value,
+        passport_numero: document.getElementById('num_passeport').value,
+        date_effet: document.getElementById('date_effet').value,
+        date_echeance: document.getElementById('date_echeance').value,
+        destination: document.getElementById('destination_select').value,
+        statut_police: 'Validé',
+        agence_id: 1,
+        produit_id: document.getElementById('zone_select').value
+    };
+
+    try {
+        const res = await fetch('http://localhost:3000/api/creer-contrat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(donnees)
+        });
+        
+        const data = await res.json();
+        if (res.ok) {
+            alert(" Succès ! Numéro de police attribué : " + data.numero_police);
+            window.location.href = 'dashboard-agence.html';
+        }
+    } catch (e) { alert("Erreur."); }
+}
+
+        // Initialisation
+        mettreAJourZone();
+    </script>
+</body>
+</html>

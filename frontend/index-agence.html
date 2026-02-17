@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Logiciel Assurance Voyage | SAMB'A ASSURANCES</title>
+    <style>
+        :root {
+            --samba-blue: #0070bb;
+            --samba-green: #39b54a;
+            --samba-yellow: #ffde00;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            border-top: 5px solid var(--samba-blue);
+        }
+        .logo { width: 160px; margin-bottom: 20px; }
+        h2 { color: #333; font-size: 20px; margin-bottom: 20px; }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: var(--samba-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        .btn-login:hover { background: var(--samba-green); }
+        
+        .toggle-link {
+            margin-top: 20px;
+            display: block;
+            color: var(--samba-blue);
+            text-decoration: none;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
+        #loader { display: none; margin-top: 15px; color: var(--samba-blue); font-weight: bold; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <img src="Logo Samba.jpeg" alt="Logo Samba" class="logo">
+        <h2 id="form-title">Connexion Agence</h2>
+        
+        <form id="auth-form" onsubmit="gererAuth(event)">
+            <div id="signup-fields" style="display:none;">
+                <input type="text" id="fullname" placeholder="Nom complet de l'agent">
+                <input type="text" id="agency_name" placeholder="Nom de votre Agence">
+                
+                <select id="role">
+                    <option value="Agent d'accueil">Rôle : Agent d'accueil</option>
+                    <option value="Chef d'Agence">Rôle : Chef d'Agence</option>
+                    <option value="Gestionnaire Sinistres">Rôle : Gestionnaire Sinistres</option>
+                </select>
+            </div>
+
+            <input type="email" id="email" placeholder="Email professionnel (@samba.ga)" required>
+            <input type="password" id="pass" placeholder="Mot de passe" required>
+            
+            <button type="submit" class="btn-login" id="btn-text">ACCÉDER AU LOGICIEL</button>
+        </form>
+        
+        <div id="loader">Initialisation de la session...</div>
+        
+        <a class="toggle-link" onclick="basculerVue()" id="toggle-text">Nouveau collaborateur ? Créer un compte</a>
+        
+        <p style="margin-top: 25px; font-size: 11px; color: #aaa;">Logiciel de Gestion Voyage - SAMB'A ASSURANCES</p>
+    </div>
+
+    <script>
+        let estInscription = false;
+
+        function basculerVue() {
+            estInscription = !estInscription;
+            const formTitle = document.getElementById('form-title');
+            const signupFields = document.getElementById('signup-fields');
+            const btnText = document.getElementById('btn-text');
+            const toggleText = document.getElementById('toggle-text');
+
+            if (estInscription) {
+                formTitle.innerText = "Inscription Collaborateur";
+                signupFields.style.display = "block";
+                btnText.innerText = "CRÉER MON COMPTE";
+                toggleText.innerText = "Déjà un compte ? Se connecter";
+            } else {
+                formTitle.innerText = "Connexion Agence";
+                signupFields.style.display = "none";
+                btnText.innerText = "ACCÉDER AU LOGICIEL";
+                toggleText.innerText = "Nouveau collaborateur ? Créer un compte";
+            }
+        }
+
+        async function gererAuth(event) {
+            event.preventDefault();
+            
+            const loader = document.getElementById('loader');
+            const btn = document.getElementById('btn-text');
+            
+            const email = document.getElementById('email').value;
+            const mot_de_passe = document.getElementById('pass').value;
+
+            const endpoint = estInscription ? '/api/inscription' : '/api/login';
+            
+            let corpsRequete = {
+                email: email,
+                mot_de_passe: mot_de_passe
+            };
+
+            if(estInscription) {
+                corpsRequete.nom_complet = document.getElementById('fullname').value;
+                corpsRequete.nom_agence = document.getElementById('agency_name').value;
+                corpsRequete.role = document.getElementById('role').value;
+            }
+
+            btn.style.display = 'none';
+            loader.style.display = 'block';
+
+            try {
+                const reponse = await fetch(`http://localhost:3000${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(corpsRequete)
+                });
+
+                const resultat = await reponse.json();
+
+                if (reponse.ok) {
+                    let userDisplay = estInscription ? document.getElementById('fullname').value.toUpperCase() : email.split('@')[0].toUpperCase();
+                    localStorage.setItem('nomClientSamba', userDisplay);
+                    window.location.href = 'dashboard-agence.html';
+                } else {
+                    alert("Erreur : " + resultat.error);
+                    btn.style.display = 'block';
+                    loader.style.display = 'none';
+                }
+            } catch (erreur) {
+                alert("Le serveur ne répond pas. Lance node server.js !");
+                btn.style.display = 'block';
+                loader.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

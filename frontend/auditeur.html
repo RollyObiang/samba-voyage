@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>SAMB'A VOYAGE | Espace Audit</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    :root { --samba-blue: #0070bb; --audit-gray: #475569; --samba-dark: #1e293b; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; margin: 0; display: flex; }
+    
+    /* Sidebar Audit */
+    .sidebar { width: 260px; background: var(--samba-dark); color: white; height: 100vh; padding: 20px; position: fixed; }
+    .status-badge { background: #334155; padding: 5px 10px; border-radius: 4px; font-size: 11px; color: #94a3b8; margin-bottom: 20px; display: inline-block; }
+    .menu-item { padding: 12px; cursor: pointer; border-radius: 8px; margin-bottom: 8px; transition: 0.3s; }
+    .menu-item.active { background: var(--audit-gray); font-weight: bold; border-left: 4px solid var(--samba-blue); }
+
+    /* Content */
+    .main-content { margin-left: 300px; padding: 30px; width: calc(100% - 340px); }
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+    
+    .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #e2e8f0; }
+    
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; padding: 15px; background: #f1f5f9; color: #475569; }
+    td { padding: 15px; border-bottom: 1px solid #f1f5f9; }
+
+    .btn-export { background: #10b981; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    .view-only-tag { color: #f59e0b; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <img src="Logo Samba.jpeg" width="150" style="margin-bottom: 10px;">
+    <div class="status-badge">● MODE LECTURE SEULE</div>
+    <h3>ESPACE AUDIT</h3>
+    <div class="menu-item active" onclick="changerPage('audit-flux', this)"> Flux de Ventes</div>
+    <div class="menu-item" onclick="changerPage('audit-agences', this)"> Contrôle Agences</div>
+    <div class="menu-item" onclick="changerPage('audit-logs', this)"> Logs Système</div>
+    <hr style="opacity: 0.1; margin: 20px 0;">
+    <div class="menu-item" onclick="window.location.href='index.html'" style="color: #f87171;"> Déconnexion</div>
+  </div>
+
+  <div class="main-content">
+    
+    <div id="audit-flux" class="page-section active">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h1>Journal des Émissions (Global)</h1>
+            <button class="btn-export" onclick="exporterExcel()"> Exporter en Excel</button>
+        </div>
+        
+        <div class="card">
+            <table id="table-flux">
+                <thead>
+                    <tr><th>Date/Heure</th><th>N° Police</th><th>Agence</th><th>Montant</th><th>Statut Paiement</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>10/02/2026 14:20</td><td>SV-4521-LBV</td><td>Agence Centre</td><td>42 000 FCFA</td><td>Confirmé</td></tr>
+                    <tr><td>10/02/2026 11:05</td><td>SV-8892-POG</td><td>Samba Port-Gentil</td><td>65 000 FCFA</td><td>Confirmé</td></tr>
+                    <tr><td>09/02/2026 17:45</td><td>SV-1023-LBV</td><td>Aéroport LBV</td><td>42 000 FCFA</td><td>En attente</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="audit-agences" class="page-section">
+        <h1>Surveillance des Partenaires</h1>
+        <div class="card">
+            <table>
+                <thead>
+                    <tr><th>Agence</th><th>Polices Totales</th><th>Sinistres Déclarés</th><th>Risque</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Agence Centre</td><td>1 240</td><td>2</td><td>Faible</td></tr>
+                    <tr><td>Aéroport LBV</td><td>850</td><td>12</td><td>Élevé</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="audit-logs" class="page-section">
+        <h1>Traçabilité des Actions</h1>
+        <div class="card">
+            <div style="font-family: monospace; font-size: 13px; color: #334155; line-height: 2;">
+                [14:20:05] - Émission Police SV-4521 par user_ag001<br>
+                [13:45:10] - Modification Tarif Zone Schengen par admin_central<br>
+                [09:00:22] - Connexion réussie : auditeur_samba
+            </div>
+        </div>
+    </div>
+
+  </div>
+
+  <script>
+    function changerPage(id, el) {
+        document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        el.classList.add('active');
+    }
+
+    // FONCTION D'EXPORT EXCEL
+    function exporterExcel() {
+        // 1. Sélectionner le tableau par son ID
+        const table = document.getElementById("table-flux");
+        
+        // 2. Convertir le tableau en feuille de calcul (worksheet)
+        const wb = XLSX.utils.table_to_book(table, { sheet: "Flux de Ventes" });
+        
+        // 3. Générer le fichier et déclencher le téléchargement
+        XLSX.writeFile(wb, "Samba_Voyage_Audit_Export.xlsx");
+    }
+  </script>
+</body>
+</html>

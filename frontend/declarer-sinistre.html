@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Samba Voyage | Déclarer un Sinistre</title>
+    <style>
+        :root { --samba-blue: #0070bb; --afa-blue: #2563eb; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 50px auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .logo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        h2 { color: var(--samba-blue); text-align: center; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #334155; }
+        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; box-sizing: border-box; }
+        textarea { height: 100px; resize: none; }
+        .btn-send { background: var(--afa-blue); color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-send:hover { background: #1e40af; }
+        .help-text { font-size: 13px; color: #64748b; margin-top: 15px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo-header">
+        <img src="Logo Samba.jpeg" width="100" alt="Logo Samba">
+        <img src="Africa First Assist_.jpeg" width="100" alt="Logo AFA">
+    </div>
+    
+    <h2> Assistance Voyage 24h/24</h2>
+    <p style="text-align: center; color: #64748b;">En cas d'accident ou de maladie à l'étranger, déclarez votre sinistre ici.</p>
+
+    <div class="input-group">
+        <label>N° de Police d'Assurance</label>
+        <input type="text" id="policeNum" placeholder="Ex: SV-151" required>
+    </div>
+
+    <div class="input-group">
+        <label>Nature de l'incident</label>
+        <select id="typeSinistre">
+            <option value="Accident">Accident de la route / corporel</option>
+            <option value="Maladie">Maladie soudaine / Hospitalisation</option>
+            <option value="Bagages">Perte ou vol de bagages</option>
+            <option value="Rapatriement">Besoin de rapatriement</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label>Description des faits</label>
+        <textarea id="descSinistre" placeholder="Expliquez brièvement ce qui vous arrive..."></textarea>
+    </div>
+
+    <button onclick="declarerSinistre()" class="btn-send">Envoyer la déclaration à l'AFA</button>
+    
+    <p class="help-text">Une fois envoyé, Africa First Assist demandera confirmation à Samba Assurances pour valider votre prise en charge.</p>
+</div>
+
+<script>
+    async function declarerSinistre() {
+        const payload = {
+            numero_police: document.getElementById('policeNum').value,
+            type: document.getElementById('typeSinistre').value,
+            description: document.getElementById('descSinistre').value
+        };
+
+        if(!payload.numero_police) return alert("Veuillez saisir votre numéro de police.");
+
+        try {
+            const res = await fetch('http://localhost:3000/api/declarer-sinistre', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+            
+            if(res.ok) {
+                alert("Déclaration envoyée ! Africa First Assist traite votre demande.");
+                window.location.reload();
+            } else {
+                alert("Erreur : Numéro de police inconnu.");
+            }
+        } catch (e) {
+            alert("Erreur de connexion au serveur.");
+        }
+    }
+</script>
+
+</body>
+</html>

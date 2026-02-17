@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>SAMBA VOYAGE | Dashboard Admin</title>
+    <style>
+        :root { 
+            --samba-blue: #0070bb; 
+            --samba-green: #39b54a; 
+            --samba-bg: #f1f5f9; 
+            --samba-dark: #0f172a;
+            --white-broken: #f8fafc;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; background: var(--samba-bg); margin: 0; display: flex; }
+
+        /* Sidebar */
+        .sidebar { width: 260px; background: #ffffff; height: 100vh; padding: 20px; position: fixed; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; }
+        .logo-container { padding: 20px; margin-bottom: 30px; text-align: center; background: var(--white-broken); border-radius: 12px; }
+        .logo-container img { max-width: 100%; height: auto; }
+
+        .menu-item { 
+            padding: 12px 15px; cursor: pointer; border-radius: 8px; margin-bottom: 8px; 
+            color: #64748b; font-weight: 500; transition: 0.3s; display: flex; align-items: center;
+            text-decoration: none;
+        }
+        .menu-item:hover { background: var(--white-broken); color: var(--samba-blue); }
+        .menu-item.active { background: #eff6ff; color: var(--samba-blue); }
+
+        /* Main Content */
+        .main-content { margin-left: 280px; padding: 40px; width: calc(100% - 280px); }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-box { 
+            padding: 20px; border-radius: 12px; background: white; border-bottom: 4px solid var(--samba-blue);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s;
+        }
+        .stat-box:hover { transform: translateY(-3px); }
+        .stat-box h3 { margin: 0; font-size: 14px; color: #64748b; text-transform: uppercase; }
+        .stat-box p { margin: 10px 0 0; font-size: 28px; font-weight: bold; color: var(--samba-dark); }
+
+        /* Table */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { background: var(--white-broken); color: #475569; padding: 15px; text-align: left; font-size: 13px; }
+        td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; cursor: pointer; transition: 0.2s; }
+        td:hover { background: #f1f5f9; color: var(--samba-blue); }
+
+        .btn-confirm { background: var(--samba-green); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .badge-urgent { background: #fee2e2; color: #b91c1c; }
+
+        /* Modale Feuille de Saisie */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; }
+        .feuille-saisie { background: white; width: 500px; padding: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Courier New', monospace; border-top: 10px solid var(--samba-blue); position: relative; }
+        .feuille-saisie h2 { text-align: center; text-decoration: underline; margin-bottom: 30px; }
+        .info-ligne { border-bottom: 1px dotted #aaa; margin: 15px 0; display: flex; justify-content: space-between; padding-bottom: 5px; }
+        .stamp { position: absolute; right: 40px; bottom: 100px; border: 3px solid var(--samba-green); color: var(--samba-green); padding: 5px 10px; transform: rotate(-15deg); font-weight: bold; border-radius: 5px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="modalSaisie" class="modal-overlay" onclick="fermerSaisie()">
+        <div class="feuille-saisie" onclick="event.stopPropagation()">
+            <h2 id="modal-titre">DONNÉE UNITAIRE</h2>
+            <div class="info-ligne"><label id="label-focus">ÉLÉMENT :</label> <span id="view-focus">---</span></div>
+            <div class="info-ligne"><label>VALEUR RÉELLE :</label> <span id="view-valeur">---</span></div>
+            <div class="info-ligne"><label>REF DOSSIER :</label> <span id="view-ref-u">---</span></div>
+            <div class="info-ligne"><label>DATE LOG :</label> <span id="view-date-u">17/02/2026</span></div>
+            
+            <div id="cachet-samba" class="stamp">VALIDE</div>
+
+            <button onclick="fermerSaisie()" style="margin-top: 30px; width: 100%; padding: 12px; background: #eee; border: 1px solid #ccc; cursor: pointer; font-family: sans-serif; font-weight: bold;">FERMER</button>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="logo-container">
+            <img src="Logo Samba.jpeg" alt="Samba Voyage">
+        </div>
+        <div class="menu-item active" onclick="location.reload()">Dashboard Central</div>
+        <div class="menu-item" onclick="ouvrirDetailGlobal('Demandes AFA')">Demandes AFA <span id="notif-count" style="margin-left:auto; background:#ef4444; color:white; padding:2px 7px; border-radius:10px; font-size:10px;">0</span></div>
+        <div class="menu-item" onclick="ouvrirArchive()">Archives Sinistres</div>
+        <div class="menu-item" onclick="ouvrirGestionAdmin()">Gestion des Admins</div>
+        <div class="menu-item" onclick="window.location.href='Connexion Admin.html'" style="margin-top: auto; color: #ef4444;">Déconnexion</div>
+    </div>
+
+    <div class="main-content">
+        <div class="header-top">
+            <h1>Espace de Validation Samba Voyage</h1>
+            <div style="text-align: right;">
+                <span style="font-weight: bold; color: var(--samba-dark);">Admin Connecté</span><br>
+                <small id="current-date" style="color: #64748b;"></small>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box" onclick="ouvrirDetailGlobal('Attente')"><h3>En Attente</h3><p id="stat-pending">0</p></div>
+            <div class="stat-box" style="border-color: var(--samba-green);" onclick="ouvrirDetailGlobal('Confirmés')"><h3>Confirmés</h3><p id="stat-confirmed">0</p></div>
+            <div class="stat-box" style="border-color: #f59e0b;" onclick="ouvrirDetailGlobal('Total')"><h3>Total</h3><p id="stat-total">0</p></div>
+        </div>
+
+        <div class="card">
+            <h2 style="font-size: 18px; margin-bottom: 20px;">Demandes Africa First Assist (AFA)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>RÉFÉRENCE</th>
+                        <th>CLIENT</th>
+                        <th>TYPE SINISTRE</th>
+                        <th>DATE DEMANDE</th>
+                        <th>PRIORITÉ</th>
+                        <th>ACTION</th>
+                    </tr>
+                </thead>
+                <tbody id="samba-table"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let currentSinistres = [];
+
+        function afficherDonnee(label, valeur, ref) {
+            document.getElementById('modal-titre').innerText = "SAISIE DE DONNÉE";
+            document.getElementById('label-focus').innerText = label + " :";
+            document.getElementById('view-focus').innerText = label;
+            document.getElementById('view-valeur').innerText = valeur;
+            document.getElementById('view-ref-u').innerText = "#SIN-" + ref;
+            document.getElementById('modalSaisie').style.display = 'flex';
+        }
+
+        function ouvrirDetailGlobal(type) {
+            afficherDonnee("RAPPORT", type, "GLOBAL");
+        }
+
+        function ouvrirArchive() { afficherDonnee("ARCHIVE", "Historique Sinistres", "LOGS"); }
+        function ouvrirGestionAdmin() { afficherDonnee("GESTION", "Admin Samba", "SECURE"); }
+        function fermerSaisie() { document.getElementById('modalSaisie').style.display = 'none'; }
+
+        async function chargerDemandesSamba() {
+            try {
+                const res = await fetch('http://localhost:3000/api/liste-sinistres');
+                currentSinistres = await res.json();
+                const tbody = document.getElementById('samba-table');
+                tbody.innerHTML = '';
+
+                const enAttente = currentSinistres.filter(s => !s.confirmation_samba);
+                document.getElementById('stat-pending').innerText = enAttente.length;
+                document.getElementById('stat-confirmed').innerText = currentSinistres.filter(s => s.confirmation_samba).length;
+                document.getElementById('stat-total').innerText = currentSinistres.length;
+                document.getElementById('notif-count').innerText = enAttente.length;
+
+                enAttente.forEach(s => {
+                    const row = `
+                        <tr>
+                            <td onclick="afficherDonnee('RÉFÉRENCE', '#SIN-${s.id}', '${s.id}')"><strong>#SIN-${s.id}</strong></td>
+                            <td onclick="afficherDonnee('CLIENT', '${s.nom_client}', '${s.id}')">${s.nom_client}</td>
+                            <td onclick="afficherDonnee('SINISTRE', '${s.type_incident}', '${s.id}')">${s.type_incident}</td>
+                            <td onclick="afficherDonnee('DATE', '17/02/2026', '${s.id}')">17/02/2026</td>
+                            <td onclick="afficherDonnee('PRIORITÉ', 'HAUTE', '${s.id}')"><span class="badge badge-urgent">HAUTE</span></td>
+                            <td onclick="event.stopPropagation();">
+                                <button class="btn-confirm" onclick="confirmerDossier(${s.id})">Valider Action</button>
+                            </td>
+                        </tr>`;
+                    tbody.innerHTML += row;
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        async function confirmerDossier(id) {
+            if(confirm("Confirmer cet incident ?")) {
+                const res = await fetch(`http://localhost:3000/api/confirmer-samba/${id}`, { method: 'PATCH' });
+                if(res.ok) { chargerDemandesSamba(); }
+            }
+        }
+
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        setInterval(chargerDemandesSamba, 5000);
+        window.onload = chargerDemandesSamba;
+    </script>
+</body>
+</html>

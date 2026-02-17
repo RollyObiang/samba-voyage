@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Samba Voyage | Connexion Audit</title>
+    <style>
+        :root { --samba-blue: #0070bb; --audit-gray: #475569; --samba-dark: #1e293b; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; margin: 0; height: 100vh; display: flex; 
+            justify-content: center; align-items: center; 
+            background: linear-gradient(135deg, #334155 0%, var(--samba-dark) 100%);
+        }
+        .login-card {
+            background: white; padding: 40px; border-radius: 16px; width: 350px; text-align: center;
+            border-top: 5px solid var(--audit-gray); box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .btn-login { width: 100%; padding: 12px; background: var(--audit-gray); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .toggle-link { margin-top: 20px; display: block; color: var(--audit-gray); text-decoration: none; font-size: 13px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <img src="Logo Samba.jpeg" width="120">
+        <h2 id="form-title">Portail Auditeur</h2>
+        <form onsubmit="gererAuth(event)">
+            <div id="signup-fields" style="display:none;">
+                <input type="text" id="fullname" placeholder="Nom du Contrôleur">
+                <input type="text" id="mat" placeholder="Numéro de Matricule">
+            </div>
+            <input type="email" id="email" placeholder="Email Audit (@samba.ga)" required>
+            <input type="password" id="pass" placeholder="Clé de sécurité" required>
+            <button type="submit" class="btn-login" id="btn-text">VÉRIFIER LES ACCÈS</button>
+        </form>
+        <a class="toggle-link" onclick="basculerVue()" id="toggle-text">Nouveau Contrôleur ? Demander un accès</a>
+    </div>
+
+    <script>
+        let estInscription = false;
+        function basculerVue() {
+            estInscription = !estInscription;
+            document.getElementById('form-title').innerText = estInscription ? "Demande d'Accès Audit" : "Portail Auditeur";
+            document.getElementById('signup-fields').style.display = estInscription ? "block" : "none";
+            document.getElementById('btn-text').innerText = estInscription ? "ENVOYER LA DEMANDE" : "VÉRIFIER LES ACCÈS";
+            document.getElementById('toggle-text').innerText = estInscription ? "Déjà accrédité ? Se connecter" : "Nouveau Contrôleur ? Demander un accès";
+        }
+        function gererAuth(event) { event.preventDefault(); window.location.href = 'auditeur.html'; }
+    </script>
+</body>
+</html>

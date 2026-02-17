@@ -1,0 +1,81 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #f4f6f8, #e9eef3);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  background: #ffffff;
+  width: 100%;
+  max-width: 600px;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #1f2937;
+}
+
+label {
+  font-weight: 600;
+  color: #374151;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0 20px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 16px;
+}
+
+button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #1e40af;
+}
+
+.result {
+  margin-top: 25px;
+  padding: 20px;
+  border-radius: 10px;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+}
+
+.result h2 {
+  color: #166534;
+  margin-bottom: 10px;
+}
+
+.result p {
+  margin: 6px 0;
+  color: #065f46;
+}
+
+.pdf-btn {
+  margin-top: 15px;
+  background: #16a34a;
+}

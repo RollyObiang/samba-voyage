@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>AFA | Portail de Validation</title>
+    <style>
+        :root { --afa-blue: #1e3a8a; --afa-light: #f8fafc; --afa-red: #b91c1c; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--afa-light); margin: 0; display: flex; }
+        
+        /* Sidebar */
+        .sidebar-afa { width: 260px; background: #ffffff; height: 100vh; padding: 20px; position: fixed; border-right: 1px solid #e2e8f0; }
+        .logo-container { padding: 15px; margin-bottom: 30px; text-align: center; }
+        .logo-container img { max-width: 100%; height: auto; }
+        
+        .menu-item { 
+            padding: 12px; cursor: pointer; border-radius: 8px; margin-bottom: 8px; 
+            color: #64748b; font-weight: 500; transition: 0.3s; 
+        }
+        .menu-item:hover { background: #f1f5f9; }
+        .menu-item.active { background: #eff6ff; color: #2563eb; }
+
+        /* Main Content */
+        .main-afa { margin-left: 280px; padding: 40px; width: 100%; }
+        .content-section { display: none; } 
+        .content-section.active { display: block; } 
+        
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        
+        /* Tableaux et interactivité */
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f1f5f9; color: #475569; padding: 15px; text-align: left; }
+        td { padding: 15px; border-bottom: 1px solid #f1f5f9; }
+        tr.clickable:hover { background: #f8fafc; cursor: pointer; }
+
+        .btn-afa { background: #2563eb; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .waiting { background: #fff7ed; color: #c2410c; }
+        .confirmed { background: #f0fdf4; color: #15803d; }
+
+        /* Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-box { padding: 20px; border-radius: 10px; border-left: 5px solid #2563eb; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: 0.2s; cursor: pointer; }
+        .stat-box:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .stat-box h3 { margin: 0; font-size: 14px; color: #64748b; }
+        .stat-box p { margin: 10px 0 0; font-size: 24px; font-weight: bold; color: #1e293b; }
+
+        /* Modale Feuille de Saisie (Papier) */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; }
+        .feuille-saisie { background: white; width: 500px; padding: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Courier New', monospace; border-top: 10px solid var(--afa-blue); position: relative; }
+        .feuille-saisie h2 { text-align: center; text-decoration: underline; margin-bottom: 30px; color: #333; }
+        .info-ligne { border-bottom: 1px dotted #aaa; margin: 15px 0; display: flex; justify-content: space-between; padding-bottom: 5px; }
+        .info-ligne label { font-weight: bold; color: #555; }
+        .stamp { position: absolute; right: 40px; bottom: 100px; border: 3px solid var(--afa-red); color: var(--afa-red); padding: 5px 10px; transform: rotate(-15deg); font-weight: bold; opacity: 0.6; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <div id="modalSaisie" class="modal-overlay" onclick="fermerSaisie()">
+        <div class="feuille-saisie" onclick="event.stopPropagation()">
+            <h2>DOSSIER D'INCIDENT AFA</h2>
+            <div class="info-ligne"><label>DOSSIER N°:</label> <span id="view-dossier">---</span></div>
+            <div class="info-ligne"><label>CLIENT:</label> <span id="view-client">---</span></div>
+            <div class="info-ligne"><label>POLICE:</label> <span id="view-police">---</span></div>
+            <div class="info-ligne"><label>INCIDENT:</label> <span id="view-type">---</span></div>
+            <div class="info-ligne"><label>DATE RAPPORT:</label> <span>17/02/2026</span></div>
+            <div class="info-ligne"><label>STATUT FINAL:</label> <span id="view-statut">---</span></div>
+            
+            <div id="cachet-afa" class="stamp">AFA VALIDÉ</div>
+
+            <div style="margin-top: 40px; font-size: 12px; color: #666;">
+                * Document généré par le portail Africa First Assist. <br>
+                * Les informations ci-dessus sont certifiées conformes.
+            </div>
+            
+            <button onclick="fermerSaisie()" style="margin-top: 30px; width: 100%; padding: 12px; background: #eee; border: 1px solid #ccc; cursor: pointer;">FERMER</button>
+        </div>
+    </div>
+
+    <div class="sidebar-afa">
+        <div class="logo-container">
+            <img src="Africa First Assist_.jpeg" alt="Logo AFA">
+        </div>
+        <div class="menu-item active" onclick="showSection('gestion')"> Gestion des Sinistres</div>
+        <div class="menu-item" onclick="showSection('rapports')"> Rapports Activité</div>
+        <div class="menu-item" onclick="showSection('parametres')"> Paramètres</div>
+    </div>
+
+    <div class="main-afa">
+        <div id="section-gestion" class="content-section active">
+            <h1>Validation des Sinistres</h1>
+            <div class="card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>N° DOSSIER</th>
+                            <th>CLIENT</th>
+                            <th>INCIDENT</th>
+                            <th>STATUT SAMBA</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody id="afa-list"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="section-rapports" class="content-section">
+            <h1>Rapports d'Activité</h1>
+            <div class="stats-grid">
+                <div class="stat-box" onclick="ouvrirDetailGlobal('Total Sinistres')">
+                    <h3>Total Sinistres</h3>
+                    <p id="stat-total">0</p>
+                </div>
+                <div class="stat-box" style="border-left-color: #f59e0b;" onclick="ouvrirDetailGlobal('En Attente Samba')">
+                    <h3>En Attente Samba</h3>
+                    <p id="stat-attente">0</p>
+                </div>
+                <div class="stat-box" style="border-left-color: #10b981;" onclick="ouvrirDetailGlobal('Dossiers Dédommagés')">
+                    <h3>Dossiers Dédommagés</h3>
+                    <p id="stat-paye">0</p>
+                </div>
+                <div class="stat-box" style="border-left-color: #ef4444;" onclick="ouvrirDetailGlobal('Montant Total Versé')">
+                    <h3>Montant Total Versé</h3>
+                    <p id="stat-montant">0 FCFA</p>
+                </div>
+            </div>
+            <div class="card clickable" onclick="ouvrirDetailGlobal('Analyse des types d\'incidents')">
+                <h3>Analyse des types d'incidents</h3>
+                <p>Volume de réassurance basé sur les dossiers validés par l'agent Samba Voyage.</p>
+                <div id="incident-breakdown" style="margin-top:20px; font-weight: bold; color: var(--afa-blue);">
+                    [ CLIQUER POUR VOIR LE DÉTAIL ANALYTIQUE ]
+                </div>
+            </div>
+        </div>
+
+        <div id="section-parametres" class="content-section">
+            <h1>Paramètres du Portail</h1>
+            <div class="card">
+                <h3>Configuration de Validation</h3>
+                <div style="display: flex; flex-direction: column; gap: 15px; max-width: 500px; margin-top: 20px;">
+                    <label>Seuil de dédommagement automatique (FCFA)</label>
+                    <input type="number" value="50000" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    <label>Délai d'alerte relance Samba (heures)</label>
+                    <input type="number" value="24" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    <label>Clé API Samba Voyage</label>
+                    <input type="password" value="********" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    <button class="btn-afa" onclick="alert('Paramètres mis à jour !')">Enregistrer les modifications</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   <script>
+    let currentSinistres = [];
+
+    function showSection(sectionId) {
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+        document.getElementById('section-' + sectionId).classList.add('active');
+        if(event) event.currentTarget.classList.add('active');
+    }
+
+    function ouvrirSaisie(id) {
+        const s = currentSinistres.find(item => item.id == id);
+        if(!s) return;
+
+        document.getElementById('view-dossier').innerText = "#SIN-" + s.id;
+        document.getElementById('view-client').innerText = s.nom_client;
+        document.getElementById('view-police').innerText = s.numero_police;
+        document.getElementById('view-type').innerText = s.type_incident;
+        document.getElementById('view-statut').innerText = s.statut_afa || "EN COURS";
+        
+        document.getElementById('cachet-afa').style.display = (s.statut_afa === 'DÉDOMMAGÉ') ? 'block' : 'none';
+        document.getElementById('modalSaisie').style.display = 'flex';
+    }
+
+    function fermerSaisie() {
+        document.getElementById('modalSaisie').style.display = 'none';
+    }
+
+    function ouvrirDetailGlobal(titre) {
+        // Suppression de l'alerte pour affichage direct
+        document.getElementById('view-dossier').innerText = "RAPPORT GLOBAL";
+        document.getElementById('view-client').innerText = "SYNTHÈSE AFA";
+        document.getElementById('view-type').innerText = titre;
+        document.getElementById('view-statut').innerText = "GÉNÉRÉ";
+        document.getElementById('cachet-afa').style.display = 'none';
+        document.getElementById('modalSaisie').style.display = 'flex';
+    }
+
+    async function chargerAfa() {
+        try {
+            const res = await fetch('http://localhost:3000/api/liste-sinistres');
+            currentSinistres = await res.json();
+            const tbody = document.getElementById('afa-list');
+            tbody.innerHTML = '';
+
+            let attente = 0, paye = 0, totalMontant = 0;
+
+            currentSinistres.forEach(s => {
+                if (!s.confirmation_samba) attente++;
+                if (s.statut_afa === 'DÉDOMMAGÉ') {
+                    paye++;
+                    totalMontant += 150000;
+                }
+
+                let boutonAction = "";
+                if (s.statut_afa === 'DÉDOMMAGÉ') {
+                    boutonAction = '<span style="color:green; font-weight:bold;"> Payé</span>';
+                } else if (s.confirmation_samba) {
+                    boutonAction = `<button class="btn-afa" style="background:#10b981;" onclick="event.stopPropagation(); payerClient(${s.id})"> Dédommager</button>`;
+                } else {
+                    boutonAction = `<button class="btn-afa" onclick="event.stopPropagation(); actionDossier(${s.id})">Interroger</button>`;
+                }
+
+                const row = `
+                    <tr class="clickable" onclick="ouvrirSaisie(${s.id})">
+                        <td>#SIN-${s.id}</td>
+                        <td>${s.nom_client}<br><small>${s.numero_police}</small></td>
+                        <td>${s.type_incident}</td>
+                        <td>
+                            <span class="badge ${s.confirmation_samba ? 'confirmed' : 'waiting'}">
+                                ${s.confirmation_samba ? ' Reconnu' : ' Attente Samba'}
+                            </span>
+                        </td>
+                        <td>${boutonAction}</td>
+                    </tr>`;
+                tbody.innerHTML += row;
+            });
+
+            document.getElementById('stat-total').innerText = currentSinistres.length;
+            document.getElementById('stat-attente').innerText = attente;
+            document.getElementById('stat-paye').innerText = paye;
+            document.getElementById('stat-montant').innerText = totalMontant.toLocaleString() + " FCFA";
+
+        } catch (e) { console.error(e); }
+    }
+
+    async function actionDossier(id) {
+        const res = await fetch(`http://localhost:3000/api/demander-confirmation/${id}`, { method: 'PATCH' });
+        if (res.ok) { chargerAfa(); }
+    }
+
+    async function payerClient(id) {
+        if(confirm("Confirmez-vous le virement ?")) {
+            const res = await fetch(`http://localhost:3000/api/dedommager-client/${id}`, { method: 'PATCH' });
+            if(res.ok) { chargerAfa(); }
+        }
+    }
+
+    window.onload = chargerAfa;
+</script>
+</body>
+</html>
