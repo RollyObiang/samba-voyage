@@ -2,23 +2,62 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Samba Voyage | Suivi de mon Sinistre</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; display: flex; justify-content: center; padding: 50px; }
-        .tracking-card { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        /* MODIFICATION : padding réduit pour mobile (20px au lieu de 50px) */
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: #f1f5f9; 
+            display: flex; 
+            justify-content: center; 
+            padding: 20px; 
+            min-height: 100vh;
+            align-items: center;
+            box-sizing: border-box;
+        }
+        /* MODIFICATION : width passe à 95% pour ne pas coller aux bords sur mobile */
+        .tracking-card { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            width: 95%; 
+            max-width: 500px; 
+            box-sizing: border-box;
+        }
         .step { display: flex; align-items: center; margin-bottom: 25px; opacity: 0.3; transition: 0.5s; }
         .step.active { opacity: 1; }
-        .circle { width: 30px; height: 30px; border-radius: 50%; background: #cbd5e1; margin-right: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        .circle { 
+            width: 30px; 
+            height: 30px; 
+            border-radius: 50%; 
+            background: #cbd5e1; 
+            margin-right: 15px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
+            font-weight: bold; 
+            flex-shrink: 0; /* AJOUT : Empêche le cercle de s'écraser si le texte est long */
+        }
         .active .circle { background: #22c55e; }
-        .status-text { font-weight: 500; color: #1e293b; }
+        .status-text { font-weight: 500; color: #1e293b; font-size: 0.95rem; }
+
+        /* AJOUT : Rend la barre de recherche empilable sur très petits écrans */
+        @media (max-width: 400px) {
+            .tracking-card div[style*="display: flex"] {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="tracking-card">
-        <h2 style="color: #0070bb; text-align: center;">Suivi de votre dossier</h2>
+        <h2 style="color: #0070bb; text-align: center; margin-top: 0;">Suivi de votre dossier</h2>
         <div style="margin-bottom: 30px; display: flex; gap: 10px;">
-            <input type="text" id="idSinistre" placeholder="N° de sinistre (ex: 1)" style="flex:1; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
-            <button onclick="suivreSinistre()" style="padding: 10px 20px; background: #0070bb; color: white; border: none; border-radius: 8px; cursor: pointer;">Chercher</button>
+            <input type="text" id="idSinistre" placeholder="N° de sinistre (ex: 1)" style="flex:1; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px;">
+            <button onclick="suivreSinistre()" style="padding: 10px 20px; background: #0070bb; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Chercher</button>
         </div>
 
         <div id="steps-container" style="display:none;">
@@ -31,18 +70,28 @@
     <script>
         async function suivreSinistre() {
             const id = document.getElementById('idSinistre').value;
-            const res = await fetch(`http://localhost:3000/api/liste-sinistres`);
-            const sinistres = await res.json();
-            const s = sinistres.find(x => x.id == id);
+            if(!id) return;
 
-            if(!s) return alert("Sinistre non trouvé");
+            try {
+                const res = await fetch(`http://localhost:3000/api/liste-sinistres`);
+                const sinistres = await res.json();
+                const s = sinistres.find(x => x.id == id);
 
-            document.getElementById('steps-container').style.display = 'block';
-            
-            // Logique d'allumage des étapes
-            document.getElementById('step1').classList.add('active');
-            if(s.confirmation_samba) document.getElementById('step2').classList.add('active');
-            if(s.statut_afa === 'DÉDOMMAGÉ') document.getElementById('step3').classList.add('active');
+                if(!s) return alert("Sinistre non trouvé");
+
+                document.getElementById('steps-container').style.display = 'block';
+                
+                // Reset des classes pour les recherches successives
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('step3').classList.remove('active');
+
+                // Logique d'allumage des étapes
+                document.getElementById('step1').classList.add('active');
+                if(s.confirmation_samba) document.getElementById('step2').classList.add('active');
+                if(s.statut_afa === 'DÉDOMMAGÉ') document.getElementById('step3').classList.add('active');
+            } catch (error) {
+                alert("Erreur lors de la connexion au serveur");
+            }
         }
     </script>
 </body>

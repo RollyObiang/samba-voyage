@@ -2,138 +2,231 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SAMB'A ASSURANCES – Espace Client</title>
-  <link rel="stylesheet" href="assets/css/style.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
       --samba-blue: #0070bb;
       --samba-green: #39b54a;
       --samba-yellow: #ffde00;
+      --samba-bg: #f1f5f9;
     }
-    .btn-samba { background: var(--samba-blue); color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-    .btn-samba:hover { opacity: 0.9; }
+
+    body { 
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+        background: var(--samba-bg); 
+        margin: 0; 
+        padding: 0; 
+        color: #333;
+    }
+
+    .container { 
+        max-width: 900px; 
+        margin: 0 auto; 
+        padding: 20px; 
+        box-sizing: border-box;
+    }
+
+    /* Cards Stats */
+    .stats-grid { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+        gap: 15px; 
+        margin-bottom: 30px; 
+    }
+    .stat-card { 
+        background: white; 
+        padding: 20px; 
+        border-radius: 12px; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+        text-align: center;
+    }
+
+    /* Buttons */
+    .btn-samba { 
+        background: var(--samba-blue); 
+        color: white; 
+        border: none; 
+        padding: 15px; 
+        border-radius: 8px; 
+        cursor: pointer; 
+        font-weight: bold; 
+        font-size: 16px;
+        transition: 0.3s;
+        text-align: center;
+    }
+    .btn-samba:hover { filter: brightness(1.1); }
+    .btn-outline {
+        background: white;
+        color: #333;
+        border: 1px solid #ddd;
+        padding: 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    /* Responsive Table to Cards */
+    .table-container { 
+        background: white; 
+        border-radius: 12px; 
+        overflow: hidden; 
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: #f8fafc; padding: 15px; text-align: left; font-size: 13px; color: #64748b; text-transform: uppercase; }
+    td { padding: 15px; border-top: 1px solid #eee; }
+
+    @media (max-width: 600px) {
+        thead { display: none; } /* On cache les titres du tableau */
+        tr { display: block; border-bottom: 2px solid #eee; padding: 10px; }
+        td { display: flex; justify-content: space-between; align-items: center; border: none; padding: 8px 15px; text-align: right; }
+        td::before { content: attr(data-label); font-weight: bold; color: #64748b; float: left; }
+        .btn-action { width: 100%; margin-top: 5px; }
+    }
+
+    /* Modals */
+    .modal { 
+        display: none; 
+        position: fixed; 
+        top: 0; left: 0; 
+        width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.8); 
+        justify-content: center; 
+        align-items: center; 
+        z-index: 2000; 
+        padding: 15px;
+        box-sizing: border-box;
+    }
+    .modal-content { 
+        background: white; 
+        padding: 25px; 
+        border-radius: 16px; 
+        width: 100%; 
+        max-width: 450px; 
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    input, select, textarea { 
+        width: 100%; 
+        padding: 12px; 
+        margin: 8px 0 18px 0; 
+        border: 1px solid #cbd5e1; 
+        border-radius: 8px; 
+        box-sizing: border-box;
+        font-size: 16px; /* Évite le zoom automatique sur iOS */
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div style="text-align: center; margin-bottom: 30px;">
-       <img src="Logo Samba.jpeg" alt="SAMB'A ASSURANCES" style="width: 180px; height: auto;">
-       <h1 style="margin-top: 10px; font-size: 22px; color: #333;">Espace Client Assurance Voyage</h1>
+    <div style="text-align: center; margin-bottom: 25px; padding-top: 10px;">
+       <img src="Logo Samba.jpeg" alt="SAMB'A ASSURANCES" style="width: 160px; height: auto;">
+       <h1 style="margin-top: 10px; font-size: 20px; color: #1e293b;">Mon Espace Voyage</h1>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;margin-bottom:30px;">
-      <div class="result" style="border-top: 4px solid var(--samba-blue)">
-        <h2 style="color: var(--samba-blue)">Contrats</h2>
-        <p><strong id="count-contrats">1</strong> Actif(s)</p>
+    <div class="stats-grid">
+      <div class="stat-card" style="border-top: 4px solid var(--samba-blue)">
+        <small style="color: #64748b; text-transform: uppercase;">Mes Contrats</small>
+        <div style="font-size: 24px; font-weight: bold; margin-top: 5px;"><span id="count-contrats">1</span> Actif(s)</div>
       </div>
-      <div class="result" style="border-top: 4px solid var(--samba-green)">
-        <h2 style="color: var(--samba-green)">Statut</h2>
-        <p>Compte Vérifié</p>
+      <div class="stat-card" style="border-top: 4px solid var(--samba-green)">
+        <small style="color: #64748b; text-transform: uppercase;">Statut Compte</small>
+        <div style="font-size: 24px; font-weight: bold; margin-top: 5px; color: var(--samba-green)">Vérifié</div>
       </div>
     </div>
 
     <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:30px;">
-      <button onclick="ouvrirModal('modalSouscription')" class="btn-samba" style="font-size: 16px;">
-        Nouvelle Souscription 
+      <button onclick="ouvrirModal('modalSouscription')" class="btn-samba">
+        ✨ Nouvelle Souscription 
       </button>
-      <button onclick="ouvrirModal('modalSinistre')" style="width:100%; background:#f3f4f6; color:#333; padding:12px; border:1px solid #ddd; border-radius:6px; cursor:pointer; font-weight:600;">
-         Déclarer un Sinistre
+      <button onclick="ouvrirModal('modalSinistre')" class="btn-outline">
+        ⚠️ Déclarer un Sinistre
       </button>
     </div>
 
-    <table style="width:100%; border-collapse:collapse; background:white; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-      <thead>
-        <tr style="background: #f8fafc; text-align:left; border-bottom: 2px solid #eee;">
-          <th style="padding:15px">N° Police</th>
-          <th>Passager</th>
-          <th>Destination</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="client-table-body">
-        <tr style="border-bottom:1px solid #eee">
-          <td style="padding:15px; font-weight:bold;">SAMBA-882-XAF</td>
-          <td>MBOULOU Jean</td>
-          <td>Libreville - Paris</td>
-          <td>
-            <button onclick="genererPDFSamba('SAMBA-882-XAF', 'MBOULOU Jean', 'Paris', '15/02/2026', '01/03/2026')" style="background:var(--samba-green); color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">📥 Carte PDF</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>N° Police</th>
+              <th>Passager</th>
+              <th>Destination</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="client-table-body">
+            <tr>
+              <td data-label="N° Police" style="font-weight:bold; color: var(--samba-blue);">SAMBA-882-XAF</td>
+              <td data-label="Passager">MBOULOU Jean</td>
+              <td data-label="Destination">Paris (France)</td>
+              <td data-label="Action">
+                <button class="btn-action" onclick="genererPDFSamba('SAMBA-882-XAF', 'MBOULOU Jean', 'Paris', '15/02/2026', '01/03/2026')" style="background:var(--samba-green); color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight: bold;">📥 PDF</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
   </div>
 
-  <div id="modalSouscription" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:1000;">
-    <div style="background:white; padding:30px; border-radius:12px; width:90%; max-width:450px;">
-      <h2 style="color: var(--samba-blue); margin-top:0;">Souscription SAMB'A</h2>
+  <div id="modalSouscription" class="modal">
+    <div class="modal-content">
+      <h2 style="color: var(--samba-blue); margin-top:0;">Souscription Voyage</h2>
       
-      <label>Nom du Voyageur :</label>
-      <input type="text" id="subNom" style="width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:6px;">
+      <label>Nom Complet :</label>
+      <input type="text" id="subNom" placeholder="Ex: Marc Obiang">
 
-      <label>Destination :</label>
-      <input type="text" id="subDest" style="width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:6px;">
+      <label>Pays de Destination :</label>
+      <input type="text" id="subDest" placeholder="Ex: France, Sénégal...">
 
-      <label>Mode de Paiement :</label>
-      <select id="subPay" style="width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:6px;">
+      <label>Paiement Sécurisé :</label>
+      <select id="subPay">
         <option value="Airtel Money">Airtel Money Gabon</option>
         <option value="Moov Money">Moov Money (Moov Africa)</option>
         <option value="Carte Bancaire">Carte VISA / Mastercard</option>
       </select>
 
-      <div style="background:#fff9c4; padding:15px; border-radius:8px; margin:15px 0; text-align:center; font-weight:bold;">
-        PRIX : 25 000 FCFA
+      <div style="background:#fef9c3; padding:15px; border-radius:10px; margin-bottom:20px; text-align:center; border: 1px solid #fde047;">
+        <span style="display:block; font-size:12px; color:#854d0e;">TARIF UNIQUE</span>
+        <strong style="font-size:20px;">25 000 FCFA</strong>
       </div>
 
       <div style="display:flex; gap:10px;">
-        <button onclick="validerContratSamba()" class="btn-samba" style="flex:2; background:var(--samba-green)">Paiement</button>
-        <button onclick="fermerModal('modalSouscription')" style="flex:1; background:#666; color:white; border:none; border-radius:6px; cursor:pointer;">Annuler</button>
+        <button onclick="validerContratSamba()" class="btn-samba" style="flex:2; background:var(--samba-green)">Payer maintenant</button>
+        <button onclick="fermerModal('modalSouscription')" style="flex:1; background:#ef4444; color:white; border:none; border-radius:8px; cursor:pointer;">X</button>
       </div>
     </div>
   </div>
 
-  <div id="modalSinistre" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:1000;">
-    <div style="background:white; padding:30px; border-radius:12px; width:90%; max-width:450px;">
-      <h2 style="color: #dc2626; margin-top:0;">Déclarer un Sinistre</h2>
-      <label>Description de l'incident :</label>
-      <textarea id="descSinistre" rows="4" style="width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:6px; font-family: inherit;"></textarea>
+  <div id="modalSinistre" class="modal">
+    <div class="modal-content">
+      <h2 style="color: #dc2626; margin-top:0;">Déclaration Sinistre</h2>
+      <p style="font-size: 14px; color: #64748b;">Décrivez brièvement votre urgence (médicale, perte bagages, etc.)</p>
       
-      <div style="display:flex; gap:10px; margin-top:10px;">
-        <button onclick="envoyerSinistre()" style="flex:2; padding:12px; background:#dc2626; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">Envoyer le dossier</button>
-        <button onclick="fermerModal('modalSinistre')" style="flex:1; padding:12px; background:#666; color:white; border:none; border-radius:6px; cursor:pointer;">Fermer</button>
+      <textarea id="descSinistre" rows="4" placeholder="Détails de l'incident..."></textarea>
+      
+      <div style="display:flex; gap:10px;">
+        <button onclick="envoyerSinistre()" style="flex:2; padding:15px; background:#dc2626; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Envoyer l'alerte</button>
+        <button onclick="fermerModal('modalSinistre')" style="flex:1; background:#64748b; color:white; border:none; border-radius:8px; cursor:pointer;">Annuler</button>
       </div>
     </div>
   </div>
 
   <div id="pdf-container" style="display:none;">
-    <div id="pdf-content" style="padding:40px; font-family:Arial; width:600px; background:white; position:relative;">
-      <div style="text-align: center; border-bottom: 2px solid var(--samba-blue); padding-bottom: 20px;">
-          <img src="Logo Samba.jpeg" style="width: 120px;">
-          <h1 style="color: var(--samba-blue); font-size: 24px; margin: 10px 0 0 0;">ATTESTATION D'ASSURANCE VOYAGE</h1>
+    <div id="pdf-content" style="padding:40px; font-family:Arial; width:600px; background:white;">
+      <div style="text-align: center; border-bottom: 2px solid #0070bb; padding-bottom: 20px;">
+          <h1 style="color: #0070bb;">ATTESTATION SAMB'A</h1>
       </div>
-      
-      <div style="margin:40px 0; line-height: 1.8;">
-        <p><strong>Numéro de Police :</strong> <span id="p-code"></span></p>
-        <p><strong>Nom de l'Assuré :</strong> <span id="p-nom"></span></p>
-        <p><strong>Destination :</strong> <span id="p-dest"></span></p>
-        <p><strong>Validité :</strong> Du <span id="p-debut"></span> au <span id="p-fin"></span></p>
-        <p><strong>Montant Prime :</strong> 25 000 FCFA (Acquittée)</p>
+      <div style="margin:40px 0; font-size: 16px;">
+        <p><strong>Police :</strong> <span id="p-code"></span></p>
+        <p><strong>Assuré :</strong> <span id="p-nom"></span></p>
+        <p><strong>Zone :</strong> <span id="p-dest"></span></p>
+        <p><strong>Validité :</strong> <span id="p-debut"></span> au <span id="p-fin"></span></p>
       </div>
-
-      <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; font-size: 12px; background: #fcfcfc;">
-        <h3 style="margin-top:0; color: var(--samba-green);">GARANTIES SAMB'A ASSURANCES :</h3>
-        <ul>
-          <li>Frais médicaux et hospitalisation d'urgence</li>
-          <li>Rapatriement sanitaire et corps</li>
-          <li>Assistance en cas de perte de documents</li>
-        </ul>
-      </div>
-
-      <div style="margin-top:40px; text-align:center;">
-        <img id="qr-code-img" src="" style="width:110px;">
-        <p style="font-size:10px; color:#999;">Document authentifié par SAMB'A ASSURANCES GABON</p>
-      </div>
+      <div style="text-align:center;"><img id="qr-code-img" src="" style="width:120px;"></div>
     </div>
   </div>
 
@@ -141,38 +234,33 @@
     function ouvrirModal(id) { document.getElementById(id).style.display = 'flex'; }
     function fermerModal(id) { document.getElementById(id).style.display = 'none'; }
 
-    // FONCTION SINISTRE
     function envoyerSinistre() {
-      const desc = document.getElementById('descSinistre').value;
-      if(!desc) return alert("Veuillez décrire l'incident.");
-      
-      alert("Votre déclaration a été envoyée avec succès à SAMB'A ASSURANCES.\nUn agent traitera votre dossier sous peu.");
-      document.getElementById('descSinistre').value = "";
+      if(!document.getElementById('descSinistre').value) return alert("Veuillez remplir la description.");
+      alert("⚠️ Alerte envoyée ! Un conseiller SAMB'A vous contactera sur votre numéro enregistré.");
       fermerModal('modalSinistre');
     }
 
     function validerContratSamba() {
       const nom = document.getElementById('subNom').value;
       const dest = document.getElementById('subDest').value;
-      if(!nom || !dest) return alert("Champs obligatoires.");
+      if(!nom || !dest) return alert("Veuillez remplir tous les champs.");
 
-      alert("Redirection vers la passerelle de paiement...");
+      alert("Paiement validé via Mobile Money !");
       
-      setTimeout(() => {
-        const code = "SAMBA-" + Math.floor(Math.random()*900) + "-XAF";
-        const tbody = document.getElementById('client-table-body');
-        tbody.innerHTML += `
-          <tr style="border-bottom:1px solid #eee">
-            <td style="padding:15px; font-weight:bold;">${code}</td>
-            <td>${nom}</td>
-            <td>${dest}</td>
-            <td>
-              <button onclick="genererPDFSamba('${code}', '${nom}', '${dest}', '09/02/2026', '24/02/2026')" style="background:var(--samba-green); color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">Carte PDF</button>
-            </td>
-          </tr>`;
-        document.getElementById('count-contrats').innerText = document.querySelectorAll('#client-table-body tr').length;
-        fermerModal('modalSouscription');
-      }, 1000);
+      const code = "SAMBA-" + Math.floor(Math.random()*999) + "-GAB";
+      const tbody = document.getElementById('client-table-body');
+      tbody.innerHTML += `
+        <tr>
+          <td data-label="N° Police" style="font-weight:bold; color: var(--samba-blue);">${code}</td>
+          <td data-label="Passager">${nom}</td>
+          <td data-label="Destination">${dest}</td>
+          <td data-label="Action">
+            <button class="btn-action" onclick="genererPDFSamba('${code}', '${nom}', '${dest}', '18/02/2026', '04/03/2026')" style="background:var(--samba-green); color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight: bold;">📥 PDF</button>
+          </td>
+        </tr>`;
+      
+      document.getElementById('count-contrats').innerText = document.querySelectorAll('#client-table-body tr').length;
+      fermerModal('modalSouscription');
     }
 
     function genererPDFSamba(code, nom, dest, debut, fin) {
@@ -181,16 +269,14 @@
       document.getElementById('p-dest').innerText = dest;
       document.getElementById('p-debut').innerText = debut;
       document.getElementById('p-fin').innerText = fin;
-      
-      document.getElementById('qr-code-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=SAMBA_${code}_${nom}`;
+      document.getElementById('qr-code-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=SAMBA_${code}`;
 
       const element = document.getElementById('pdf-content');
       document.getElementById('pdf-container').style.display = 'block';
 
       html2pdf().set({
         margin: 10,
-        filename: `SAMBA_Attestation_${nom}.pdf`,
-        html2canvas: { scale: 2 },
+        filename: `SAMBA_${nom}.pdf`,
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       }).from(element).save().then(() => {
         document.getElementById('pdf-container').style.display = 'none';

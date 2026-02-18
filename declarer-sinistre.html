@@ -2,67 +2,195 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Samba Voyage | Déclarer un Sinistre</title>
     <style>
-        :root { --samba-blue: #0070bb; --afa-blue: #2563eb; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 50px auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .logo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        h2 { color: var(--samba-blue); text-align: center; }
+        :root { 
+            --samba-blue: #0070bb; 
+            --afa-blue: #2563eb; 
+            --text-dark: #1e293b;
+        }
+        
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background: #f8fafc; 
+            margin: 0; 
+            padding: 0;
+            color: var(--text-dark);
+        }
+
+        .container { 
+            max-width: 500px; 
+            margin: 20px auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+            width: 95%; /* Marge sur mobile */
+        }
+
+        .logo-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 25px; 
+            gap: 10px;
+        }
+        
+        .logo-header img { 
+            max-width: 100px; 
+            height: auto; 
+            object-fit: contain;
+        }
+
+        h2 { 
+            color: var(--samba-blue); 
+            text-align: center; 
+            font-size: 22px;
+            margin-top: 0;
+        }
+
         .input-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #334155; }
-        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; box-sizing: border-box; }
-        textarea { height: 100px; resize: none; }
-        .btn-send { background: var(--afa-blue); color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-send:hover { background: #1e40af; }
-        .help-text { font-size: 13px; color: #64748b; margin-top: 15px; text-align: center; }
+
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 600; 
+            color: #475569;
+            font-size: 14px;
+        }
+
+        input, select, textarea { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 10px; 
+            box-sizing: border-box; 
+            font-size: 16px; /* Important : Empêche le zoom auto sur mobile */
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--afa-blue);
+            background: #f0f7ff;
+        }
+
+        textarea { 
+            height: 120px; 
+            resize: vertical; 
+        }
+
+        .btn-send { 
+            background: var(--afa-blue); 
+            color: white; 
+            border: none; 
+            width: 100%; 
+            padding: 18px; 
+            border-radius: 10px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: transform 0.1s, background 0.3s;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-send:active {
+            transform: scale(0.98);
+        }
+
+        .help-text { 
+            font-size: 13px; 
+            color: #64748b; 
+            margin-top: 20px; 
+            text-align: center; 
+            line-height: 1.5;
+            padding: 10px;
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+
+        /* --- MODE URGENT (ROUGE) --- */
+        .urgent-call {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #dc2626;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        @media (max-width: 400px) {
+            .container { padding: 20px; }
+            h2 { font-size: 18px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="logo-header">
-        <img src="Logo Samba.jpeg" width="100" alt="Logo Samba">
-        <img src="Africa First Assist_.jpeg" width="100" alt="Logo AFA">
+        <img src="Logo Samba.jpeg" alt="Logo Samba">
+        <img src="Africa First Assist_.jpeg" alt="Logo AFA">
     </div>
     
-    <h2> Assistance Voyage 24h/24</h2>
-    <p style="text-align: center; color: #64748b;">En cas d'accident ou de maladie à l'étranger, déclarez votre sinistre ici.</p>
+    <h2>Assistance 24h/24</h2>
+    <p style="text-align: center; color: #64748b; font-size: 14px; margin-bottom: 25px;">
+        Déclarez votre incident pour une prise en charge immédiate par <strong>AFA</strong>.
+    </p>
 
     <div class="input-group">
-        <label>N° de Police d'Assurance</label>
+        <label for="policeNum">N° de Police d'Assurance</label>
         <input type="text" id="policeNum" placeholder="Ex: SV-151" required>
     </div>
 
     <div class="input-group">
-        <label>Nature de l'incident</label>
+        <label for="typeSinistre">Nature de l'urgence</label>
         <select id="typeSinistre">
-            <option value="Accident">Accident de la route / corporel</option>
-            <option value="Maladie">Maladie soudaine / Hospitalisation</option>
-            <option value="Bagages">Perte ou vol de bagages</option>
-            <option value="Rapatriement">Besoin de rapatriement</option>
+            <option value="Accident">Accident corporel</option>
+            <option value="Maladie">Maladie / Hospitalisation</option>
+            <option value="Bagages">Perte / Vol de bagages</option>
+            <option value="Rapatriement">Rapatriement sanitaire</option>
         </select>
     </div>
 
     <div class="input-group">
-        <label>Description des faits</label>
-        <textarea id="descSinistre" placeholder="Expliquez brièvement ce qui vous arrive..."></textarea>
+        <label for="descSinistre">Description (Lieu, faits...)</label>
+        <textarea id="descSinistre" placeholder="Où êtes-vous et que s'est-il passé ?"></textarea>
     </div>
 
-    <button onclick="declarerSinistre()" class="btn-send">Envoyer la déclaration à l'AFA</button>
+    <button onclick="declarerSinistre()" id="submitBtn" class="btn-send">Envoyer l'alerte à l'AFA</button>
     
-    <p class="help-text">Une fois envoyé, Africa First Assist demandera confirmation à Samba Assurances pour valider votre prise en charge.</p>
+    <a href="tel:+24101234567" class="urgent-call"> Appel d'urgence direct</a>
+
+    <div class="help-text">
+        <strong>Note :</strong> Africa First Assist vérifiera la validité de votre contrat auprès de Samba Assurances avant toute intervention.
+    </div>
 </div>
 
 <script>
     async function declarerSinistre() {
-        const payload = {
-            numero_police: document.getElementById('policeNum').value,
-            type: document.getElementById('typeSinistre').value,
-            description: document.getElementById('descSinistre').value
-        };
+        const btn = document.getElementById('submitBtn');
+        const police = document.getElementById('policeNum').value;
+        const desc = document.getElementById('descSinistre').value;
 
-        if(!payload.numero_police) return alert("Veuillez saisir votre numéro de police.");
+        if(!police) {
+            alert("Veuillez saisir votre numéro de police.");
+            return;
+        }
+
+        // Effet de chargement
+        btn.innerText = "Envoi en cours...";
+        btn.style.opacity = "0.7";
+        btn.disabled = true;
+
+        const payload = {
+            numero_police: police,
+            type: document.getElementById('typeSinistre').value,
+            description: desc
+        };
 
         try {
             const res = await fetch('http://localhost:3000/api/declarer-sinistre', {
@@ -72,13 +200,19 @@
             });
             
             if(res.ok) {
-                alert("Déclaration envoyée ! Africa First Assist traite votre demande.");
+                alert(" Déclaration transmise ! Africa First Assist a reçu votre alerte et attend la confirmation de Samba.");
                 window.location.reload();
             } else {
-                alert("Erreur : Numéro de police inconnu.");
+                alert(" Erreur : Ce numéro de police n'existe pas ou le contrat est expiré.");
+                btn.innerText = "Envoyer la déclaration à l'AFA";
+                btn.disabled = false;
+                btn.style.opacity = "1";
             }
         } catch (e) {
-            alert("Erreur de connexion au serveur.");
+            alert(" Erreur réseau. Vérifiez votre connexion internet.");
+            btn.innerText = "Réessayer l'envoi";
+            btn.disabled = false;
+            btn.style.opacity = "1";
         }
     }
 </script>

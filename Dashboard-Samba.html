@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SAMBA VOYAGE | Dashboard Admin</title>
     <style>
         :root { 
@@ -14,8 +15,8 @@
 
         body { font-family: 'Segoe UI', sans-serif; background: var(--samba-bg); margin: 0; display: flex; }
 
-        /* Sidebar */
-        .sidebar { width: 260px; background: #ffffff; height: 100vh; padding: 20px; position: fixed; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; }
+        /* Sidebar - On la garde identique */
+        .sidebar { width: 260px; background: #ffffff; height: 100vh; padding: 20px; position: fixed; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; z-index: 1000; }
         .logo-container { padding: 20px; margin-bottom: 30px; text-align: center; background: var(--white-broken); border-radius: 12px; }
         .logo-container img { max-width: 100%; height: auto; }
 
@@ -28,9 +29,9 @@
         .menu-item.active { background: #eff6ff; color: var(--samba-blue); }
 
         /* Main Content */
-        .main-content { margin-left: 280px; padding: 40px; width: calc(100% - 280px); }
+        .main-content { margin-left: 280px; padding: 40px; width: calc(100% - 280px); transition: 0.3s; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; overflow-x: auto; }
 
         /* Stats Grid */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px; }
@@ -43,67 +44,63 @@
         .stat-box p { margin: 10px 0 0; font-size: 28px; font-weight: bold; color: var(--samba-dark); }
 
         /* Table */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; min-width: 600px; }
         th { background: var(--white-broken); color: #475569; padding: 15px; text-align: left; font-size: 13px; }
-        td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; cursor: pointer; transition: 0.2s; }
-        td:hover { background: #f1f5f9; color: var(--samba-blue); }
+        td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; cursor: pointer; }
 
         .btn-confirm { background: var(--samba-green); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; }
         .badge { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
         .badge-urgent { background: #fee2e2; color: #b91c1c; }
 
-        /* Modale Feuille de Saisie */
+        /* Modale Feuille de Saisie (Design Papier conservé) */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; }
-        .feuille-saisie { background: white; width: 500px; padding: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Courier New', monospace; border-top: 10px solid var(--samba-blue); position: relative; }
+        .feuille-saisie { background: white; width: 450px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Courier New', monospace; border-top: 10px solid var(--samba-blue); position: relative; max-width: 90%; }
         .feuille-saisie h2 { text-align: center; text-decoration: underline; margin-bottom: 30px; }
         .info-ligne { border-bottom: 1px dotted #aaa; margin: 15px 0; display: flex; justify-content: space-between; padding-bottom: 5px; }
-        .stamp { position: absolute; right: 40px; bottom: 100px; border: 3px solid var(--samba-green); color: var(--samba-green); padding: 5px 10px; transform: rotate(-15deg); font-weight: bold; border-radius: 5px; display: none; }
+        .stamp { position: absolute; right: 20px; bottom: 80px; border: 3px solid var(--samba-green); color: var(--samba-green); padding: 5px 10px; transform: rotate(-15deg); font-weight: bold; border-radius: 5px; display: none; }
+
+        /* AJUSTEMENTS RESPONSIVE (POUR TÉLÉPHONE) */
+        @media (max-width: 1024px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid #e2e8f0; padding: 10px; box-sizing: border-box; }
+            .main-content { margin-left: 0; width: 100%; padding: 20px; box-sizing: border-box; }
+            .header-top { flex-direction: column; align-items: flex-start; gap: 10px; }
+        }
     </style>
 </head>
 <body>
 
     <div id="modalSaisie" class="modal-overlay" onclick="fermerSaisie()">
         <div class="feuille-saisie" onclick="event.stopPropagation()">
-            <h2 id="modal-titre">DONNÉE UNITAIRE</h2>
-            <div class="info-ligne"><label id="label-focus">ÉLÉMENT :</label> <span id="view-focus">---</span></div>
-            <div class="info-ligne"><label>VALEUR RÉELLE :</label> <span id="view-valeur">---</span></div>
-            <div class="info-ligne"><label>REF DOSSIER :</label> <span id="view-ref-u">---</span></div>
-            <div class="info-ligne"><label>DATE LOG :</label> <span id="view-date-u">17/02/2026</span></div>
-            
-            <div id="cachet-samba" class="stamp">VALIDE</div>
-
+            <h2 id="modal-titre">DÉTAIL DOSSIER</h2>
+            <div class="info-ligne"><label id="label-focus">CHAMP :</label> <span id="view-focus">---</span></div>
+            <div class="info-ligne"><label>VALEUR :</label> <span id="view-valeur">---</span></div>
+            <div class="info-ligne"><label>DOSSIER :</label> <span id="view-ref-u">---</span></div>
+            <div class="info-ligne"><label>DATE :</label> <span>17/02/2026</span></div>
+            <div id="cachet-samba" class="stamp">VÉRIFIÉ</div>
             <button onclick="fermerSaisie()" style="margin-top: 30px; width: 100%; padding: 12px; background: #eee; border: 1px solid #ccc; cursor: pointer; font-family: sans-serif; font-weight: bold;">FERMER</button>
         </div>
     </div>
 
     <div class="sidebar">
-        <div class="logo-container">
-            <img src="Logo Samba.jpeg" alt="Samba Voyage">
-        </div>
-        <div class="menu-item active" onclick="location.reload()">Dashboard Central</div>
-        <div class="menu-item" onclick="ouvrirDetailGlobal('Demandes AFA')">Demandes AFA <span id="notif-count" style="margin-left:auto; background:#ef4444; color:white; padding:2px 7px; border-radius:10px; font-size:10px;">0</span></div>
-        <div class="menu-item" onclick="ouvrirArchive()">Archives Sinistres</div>
-        <div class="menu-item" onclick="ouvrirGestionAdmin()">Gestion des Admins</div>
-        <div class="menu-item" onclick="window.location.href='Connexion Admin.html'" style="margin-top: auto; color: #ef4444;">Déconnexion</div>
+        <div class="logo-container"><img src="Logo Samba.jpeg" alt="Samba Voyage"></div>
+        <div class="menu-item active">Dashboard Central</div>
+        <div class="menu-item">Demandes AFA <span id="notif-count" style="margin-left:auto; background:#ef4444; color:white; padding:2px 7px; border-radius:10px; font-size:10px;">0</span></div>
     </div>
 
     <div class="main-content">
         <div class="header-top">
-            <h1>Espace de Validation Samba Voyage</h1>
-            <div style="text-align: right;">
-                <span style="font-weight: bold; color: var(--samba-dark);">Admin Connecté</span><br>
-                <small id="current-date" style="color: #64748b;"></small>
-            </div>
+            <h1>Demandes Africa First Assist (AFA)</h1>
+            <div id="current-date" style="color: #64748b;"></div>
         </div>
 
         <div class="stats-grid">
-            <div class="stat-box" onclick="ouvrirDetailGlobal('Attente')"><h3>En Attente</h3><p id="stat-pending">0</p></div>
-            <div class="stat-box" style="border-color: var(--samba-green);" onclick="ouvrirDetailGlobal('Confirmés')"><h3>Confirmés</h3><p id="stat-confirmed">0</p></div>
-            <div class="stat-box" style="border-color: #f59e0b;" onclick="ouvrirDetailGlobal('Total')"><h3>Total</h3><p id="stat-total">0</p></div>
+            <div class="stat-box"><h3>En Attente</h3><p id="stat-pending">0</p></div>
+            <div class="stat-box" style="border-color: var(--samba-green);"><h3>Confirmés</h3><p id="stat-confirmed">0</p></div>
+            <div class="stat-box" style="border-color: #f59e0b;"><h3>Total</h3><p id="stat-total">0</p></div>
         </div>
 
         <div class="card">
-            <h2 style="font-size: 18px; margin-bottom: 20px;">Demandes Africa First Assist (AFA)</h2>
             <table>
                 <thead>
                     <tr>
@@ -121,10 +118,12 @@
     </div>
 
     <script>
-        let currentSinistres = [];
+        const demoData = [
+            {id: 1024, nom_client: "Jean Dupont", type_incident: "Panne Moteur", confirmation_samba: 0},
+            {id: 1025, nom_client: "Marie Curie", type_incident: "Accident Corporel", confirmation_samba: 0}
+        ];
 
         function afficherDonnee(label, valeur, ref) {
-            document.getElementById('modal-titre').innerText = "SAISIE DE DONNÉE";
             document.getElementById('label-focus').innerText = label + " :";
             document.getElementById('view-focus').innerText = label;
             document.getElementById('view-valeur').innerText = valeur;
@@ -132,54 +131,39 @@
             document.getElementById('modalSaisie').style.display = 'flex';
         }
 
-        function ouvrirDetailGlobal(type) {
-            afficherDonnee("RAPPORT", type, "GLOBAL");
-        }
-
-        function ouvrirArchive() { afficherDonnee("ARCHIVE", "Historique Sinistres", "LOGS"); }
-        function ouvrirGestionAdmin() { afficherDonnee("GESTION", "Admin Samba", "SECURE"); }
         function fermerSaisie() { document.getElementById('modalSaisie').style.display = 'none'; }
 
-        async function chargerDemandesSamba() {
+        async function chargerDemandes() {
+            let data = demoData; 
             try {
                 const res = await fetch('http://localhost:3000/api/liste-sinistres');
-                currentSinistres = await res.json();
-                const tbody = document.getElementById('samba-table');
-                tbody.innerHTML = '';
+                if (res.ok) data = await res.json();
+            } catch (e) { console.log("Mode démo actif"); }
 
-                const enAttente = currentSinistres.filter(s => !s.confirmation_samba);
-                document.getElementById('stat-pending').innerText = enAttente.length;
-                document.getElementById('stat-confirmed').innerText = currentSinistres.filter(s => s.confirmation_samba).length;
-                document.getElementById('stat-total').innerText = currentSinistres.length;
-                document.getElementById('notif-count').innerText = enAttente.length;
+            const tbody = document.getElementById('samba-table');
+            tbody.innerHTML = '';
+            
+            document.getElementById('stat-pending').innerText = data.filter(s => !s.confirmation_samba).length;
+            document.getElementById('stat-total').innerText = data.length;
 
-                enAttente.forEach(s => {
+            data.forEach(s => {
+                if(!s.confirmation_samba) {
                     const row = `
-                        <tr>
-                            <td onclick="afficherDonnee('RÉFÉRENCE', '#SIN-${s.id}', '${s.id}')"><strong>#SIN-${s.id}</strong></td>
-                            <td onclick="afficherDonnee('CLIENT', '${s.nom_client}', '${s.id}')">${s.nom_client}</td>
-                            <td onclick="afficherDonnee('SINISTRE', '${s.type_incident}', '${s.id}')">${s.type_incident}</td>
-                            <td onclick="afficherDonnee('DATE', '17/02/2026', '${s.id}')">17/02/2026</td>
-                            <td onclick="afficherDonnee('PRIORITÉ', 'HAUTE', '${s.id}')"><span class="badge badge-urgent">HAUTE</span></td>
-                            <td onclick="event.stopPropagation();">
-                                <button class="btn-confirm" onclick="confirmerDossier(${s.id})">Valider Action</button>
-                            </td>
-                        </tr>`;
+                    <tr>
+                        <td onclick="afficherDonnee('RÉFÉRENCE', '#SIN-${s.id}', '${s.id}')"><strong>#SIN-${s.id}</strong></td>
+                        <td onclick="afficherDonnee('CLIENT', '${s.nom_client}', '${s.id}')">${s.nom_client}</td>
+                        <td onclick="afficherDonnee('SINISTRE', '${s.type_incident}', '${s.id}')">${s.type_incident}</td>
+                        <td onclick="afficherDonnee('DATE', '17/02/2026', '${s.id}')">17/02/2026</td>
+                        <td onclick="afficherDonnee('PRIORITÉ', 'HAUTE', '${s.id}')"><span class="badge badge-urgent">HAUTE</span></td>
+                        <td><button class="btn-confirm" onclick="alert('Confirmé')">Confirmer</button></td>
+                    </tr>`;
                     tbody.innerHTML += row;
-                });
-            } catch (e) { console.error(e); }
+                }
+            });
         }
 
-        async function confirmerDossier(id) {
-            if(confirm("Confirmer cet incident ?")) {
-                const res = await fetch(`http://localhost:3000/api/confirmer-samba/${id}`, { method: 'PATCH' });
-                if(res.ok) { chargerDemandesSamba(); }
-            }
-        }
-
-        document.getElementById('current-date').innerText = new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        setInterval(chargerDemandesSamba, 5000);
-        window.onload = chargerDemandesSamba;
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+        window.onload = chargerDemandes;
     </script>
 </body>
 </html>

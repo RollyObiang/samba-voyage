@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Samba Voyage | Mon Espace Assuré</title>
     <style>
         :root { --samba-blue: #0070bb; --samba-green: #39b54a; }
@@ -11,12 +12,24 @@
             background: #f0f4f8; 
         }
         .login-card {
-            background: white; padding: 40px; border-radius: 16px; width: 350px; text-align: center;
+            background: white; padding: 40px; border-radius: 16px; 
+            /* MODIFICATION : width devient max-width pour ne pas dépasser sur mobile */
+            width: 90%; 
+            max-width: 350px; 
+            text-align: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 5px solid var(--samba-green);
+            /* AJOUT : Pour centrer correctement sur petits écrans */
+            box-sizing: border-box;
         }
         input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
         .btn-login { width: 100%; padding: 12px; background: var(--samba-green); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .toggle-link { margin-top: 20px; display: block; color: var(--samba-green); text-decoration: none; font-size: 13px; cursor: pointer; }
+        
+        /* AJOUT : Ajustement de la taille du texte sur mobile */
+        @media (max-width: 480px) {
+            .login-card { padding: 25px; }
+            h2 { font-size: 1.2rem; }
+        }
     </style>
 </head>
 <body>

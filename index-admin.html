@@ -2,107 +2,225 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SAMB'A VOYAGE | Connexion Admin</title>
   <style>
-    :root { --samba-blue: #0070bb; --samba-green: #39b54a; --samba-dark: #0f172a; }
+    :root { 
+        --samba-blue: #0070bb; 
+        --samba-green: #39b54a; 
+        --samba-dark: #0f172a; 
+        --error-red: #ef4444;
+    }
     
     body { 
-      font-family: 'Segoe UI', sans-serif; 
-      margin: 0; height: 100vh; display: flex; 
-      justify-content: center; align-items: center; 
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+      margin: 0; 
+      min-height: 100vh; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
       background: linear-gradient(135deg, var(--samba-dark) 0%, #1e293b 100%);
+      padding: 20px;
     }
 
     .login-card {
-      background: white; padding: 40px; border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 350px; text-align: center;
+      background: white; 
+      padding: 40px 30px; 
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+      width: 100%;
+      max-width: 380px; 
+      text-align: center;
+      box-sizing: border-box;
     }
 
-    h2 { color: var(--samba-dark); margin-bottom: 5px; }
-    p { color: #64748b; font-size: 14px; margin-bottom: 25px; }
+    .logo-space img {
+        max-width: 140px;
+        margin-bottom: 10px;
+    }
+
+    h2 { color: var(--samba-dark); margin: 10px 0 5px 0; font-size: 24px; }
+    p { color: #64748b; font-size: 15px; margin-bottom: 30px; }
+
+    .input-wrapper {
+        position: relative;
+        margin-bottom: 15px;
+    }
 
     input {
-      width: 100%; padding: 12px; margin-bottom: 15px;
-      border: 1px solid #e2e8f0; border-radius: 8px; box-sizing: border-box;
-      outline: none; transition: 0.3s;
+      width: 100%; 
+      padding: 14px; 
+      border: 1.5px solid #e2e8f0; 
+      border-radius: 10px; 
+      box-sizing: border-box;
+      outline: none; 
+      transition: all 0.3s ease;
+      font-size: 16px; /* Empêche le zoom iOS */
     }
 
-    input:focus { border-color: var(--samba-blue); box-shadow: 0 0 0 3px rgba(0, 112, 187, 0.1); }
+    input:focus { 
+        border-color: var(--samba-blue); 
+        box-shadow: 0 0 0 4px rgba(0, 112, 187, 0.1); 
+    }
 
     .btn-login {
-      width: 100%; padding: 12px; background: var(--samba-blue);
-      color: white; border: none; border-radius: 8px;
-      font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s;
+      width: 100%; 
+      padding: 15px; 
+      background: var(--samba-blue);
+      color: white; 
+      border: none; 
+      border-radius: 10px;
+      font-weight: bold; 
+      cursor: pointer; 
+      font-size: 16px; 
+      transition: 0.3s;
+      margin-top: 10px;
     }
 
-    .btn-login:hover { background: #005a96; transform: translateY(-1px); }
+    .btn-login:hover { background: #005a96; transform: translateY(-2px); }
+    .btn-login:active { transform: translateY(0); }
 
-    .error-msg { color: #ef4444; font-size: 13px; margin-bottom: 15px; display: none; }
+    .error-msg { 
+        color: var(--error-red); 
+        font-size: 14px; 
+        background: #fee2e2;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 20px; 
+        display: none; 
+    }
 
-    .create-link { margin-top: 15px; display: block; color: var(--samba-blue); font-size: 13px; cursor: pointer; text-decoration: none; }
+    .create-link { 
+        margin-top: 20px; 
+        display: inline-block; 
+        color: var(--samba-blue); 
+        font-size: 14px; 
+        cursor: pointer; 
+        text-decoration: none; 
+        font-weight: 500;
+    }
 
-    /* Modal Style */
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
-    .modal-content { background: white; padding: 30px; border-radius: 12px; width: 300px; text-align: center; }
+    /* Modal */
+    .modal { 
+        display: none; 
+        position: fixed; 
+        top: 0; left: 0; 
+        width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.7); 
+        backdrop-filter: blur(4px);
+        justify-content: center; 
+        align-items: center; 
+        z-index: 100;
+        padding: 20px;
+    }
+    
+    .modal-content { 
+        background: white; 
+        padding: 30px; 
+        border-radius: 16px; 
+        width: 100%;
+        max-width: 320px; 
+        text-align: center; 
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .toggle-pass {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        font-size: 12px;
+        color: var(--samba-blue);
+        background: none;
+        border: none;
+        font-weight: bold;
+    }
   </style>
 </head>
 <body>
 
-  <div class="login-card">
+  <div class="login-card" id="card">
     <div class="logo-space">
-        <img src="Logo Samba.jpeg" width="120" onerror="this.alt='SAMBA LOGO'">
+        <img src="Logo Samba.jpeg" alt="Samba Assurances">
     </div>
     <h2>Portail Admin</h2>
-    <p>Accès personnel Samba</p>
+    <p>Accès sécurisé Samba Voyage</p>
 
-    <div id="error" class="error-msg">Identifiants incorrects !</div>
+    <div id="error" class="error-msg">⚠️ Identifiants incorrects</div>
 
-    <input type="text" id="user" placeholder="Nom d'utilisateur">
-    <input type="password" id="pass" placeholder="Mot de passe">
+    <div class="input-wrapper">
+        <input type="text" id="user" placeholder="Nom d'utilisateur" autocomplete="username">
+    </div>
+    
+    <div class="input-wrapper">
+        <input type="password" id="pass" placeholder="Mot de passe" autocomplete="current-password">
+        <button type="button" class="toggle-pass" onclick="toggleView('pass')">VOIR</button>
+    </div>
     
     <button class="btn-login" onclick="connexion()">Se connecter</button>
 
-    <a class="create-link" onclick="toggleModal(true)">Créer un nouveau compte admin</a>
+    <a class="create-link" onclick="toggleModal(true)">Créer un nouvel admin</a>
 
-    <div style="margin-top: 20px; font-size: 11px; color: #94a3b8;">
-        &copy; 2026 Samba Assurances
+    <div style="margin-top: 25px; font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9; padding-top: 20px;">
+        &copy; 2026 Samba Assurances - Gabon
     </div>
   </div>
 
   <div id="createModal" class="modal">
     <div class="modal-content">
-        <h3>Nouvel Admin</h3>
-        <input type="text" id="new-user" placeholder="Choisir utilisateur">
-        <input type="password" id="new-pass" placeholder="Choisir mot de passe">
+        <h3 style="margin-top:0;">Nouvel Admin</h3>
+        <input type="text" id="new-user" placeholder="Identifiant" style="margin-bottom:10px;">
+        <input type="password" id="new-pass" placeholder="Mot de passe" style="margin-bottom:20px;">
         <button class="btn-login" style="background: var(--samba-green);" onclick="creerCompte()">Enregistrer</button>
-        <button class="create-link" style="border:none; background:none; margin:10px auto;" onclick="toggleModal(false)">Annuler</button>
+        <button class="create-link" style="border:none; background:none;" onclick="toggleModal(false)">Annuler</button>
     </div>
   </div>
 
   <script>
-    // Stockage local pour simuler une base de données
     let admins = JSON.parse(localStorage.getItem('samba_admins')) || [{u: "admin", p: "samba2026"}];
 
     function connexion() {
         const user = document.getElementById('user').value;
         const pass = document.getElementById('pass').value;
         const error = document.getElementById('error');
+        const card = document.getElementById('card');
 
-        // Vérification dans la liste des admins
         const found = admins.find(a => a.u === user && a.p === pass);
 
         if(found) {
-            window.location.href = "Dashboard-Samba.html"; 
+            // Effet de transition avant redirection
+            card.style.opacity = "0.5";
+            card.style.transform = "scale(0.95)";
+            setTimeout(() => {
+                window.location.href = "Dashboard-Samba.html"; 
+            }, 300);
         } else {
             error.style.display = "block";
-            document.querySelector('.login-card').animate([
-                { transform: 'translateX(-10px)' }, { transform: 'translateX(10px)' }, { transform: 'translateX(0px)' }
-            ], { duration: 300 });
+            // Animation de secousse
+            card.animate([
+                { transform: 'translateX(-10px)' },
+                { transform: 'translateX(10px)' },
+                { transform: 'translateX(-10px)' },
+                { transform: 'translateX(0px)' }
+            ], { duration: 400 });
         }
     }
 
     function toggleModal(show) {
         document.getElementById('createModal').style.display = show ? 'flex' : 'none';
+    }
+
+    function toggleView(id) {
+        const x = document.getElementById(id);
+        const btn = x.nextElementSibling;
+        if (x.type === "password") {
+            x.type = "text";
+            btn.innerText = "CACHER";
+        } else {
+            x.type = "password";
+            btn.innerText = "VOIR";
+        }
     }
 
     function creerCompte() {
@@ -112,14 +230,23 @@
         if(u && p) {
             admins.push({u: u, p: p});
             localStorage.setItem('samba_admins', JSON.stringify(admins));
-            alert("Compte créé avec succès pour " + u);
+            alert("Compte créé avec succès !");
             toggleModal(false);
         } else {
-            alert("Veuillez remplir les champs");
+            alert("Veuillez remplir tous les champs");
         }
     }
 
-    document.addEventListener('keypress', (e) => { if (e.key === 'Enter') connexion(); });
+    // Touche Entrée pour valider
+    document.addEventListener('keypress', (e) => { 
+        if (e.key === 'Enter') {
+            if(document.getElementById('createModal').style.display === 'flex') {
+                creerCompte();
+            } else {
+                connexion();
+            }
+        }
+    });
   </script>
 
 </body>

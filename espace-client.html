@@ -2,47 +2,65 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Samba Voyage | Mon Espace Client</title>
     <style>
         :root { --samba-blue: #0070bb; --samba-bg: #f8fafc; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--samba-bg); margin: 0; padding: 20px; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--samba-bg); margin: 0; padding: 15px; }
         .container { max-width: 900px; margin: auto; }
         
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .btn-principal { background: var(--samba-blue); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; text-decoration: none; margin-left: 10px; }
+        /* HEADER RESPONSIVE */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
+        .header img { max-width: 120px; }
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-principal { background: var(--samba-blue); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 14px; flex-grow: 1; text-align: center; }
 
         .stats-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 30px; }
         .stat-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: 0.3s; cursor: pointer; border: 1px solid #e2e8f0; }
         .stat-card:hover { transform: translateY(-2px); border-color: var(--samba-blue); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
+        /* DOSSIERS SINISTRES */
         .card-sinistre { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 15px; border-left: 5px solid #cbd5e1; }
         .card-sinistre.paye { border-left-color: #22c55e; }
         .card-sinistre.en-cours { border-left-color: #f59e0b; }
 
-        .progress-track { display: flex; justify-content: space-between; margin-top: 20px; position: relative; }
-        .step { flex: 1; text-align: center; font-size: 12px; color: #94a3b8; position: relative; }
-        .step::before { content: ""; width: 20px; height: 20px; background: #e2e8f0; border-radius: 50%; display: block; margin: 0 auto 5px; }
+        /* BARRE DE PROGRESSION MOBILE-FIRST */
+        .progress-track { display: flex; justify-content: space-between; margin-top: 20px; position: relative; gap: 5px; }
+        .step { flex: 1; text-align: center; font-size: 10px; color: #94a3b8; position: relative; }
+        .step::before { content: ""; width: 18px; height: 18px; background: #e2e8f0; border-radius: 50%; display: block; margin: 0 auto 5px; z-index: 2; position: relative; }
+        
+        /* Ligne de connexion entre les étapes */
+        .step:not(:last-child)::after { content: ""; position: absolute; top: 9px; left: 50%; width: 100%; height: 2px; background: #e2e8f0; z-index: 1; }
+
         .step.active { color: var(--samba-blue); font-weight: bold; }
-        .step.active::before { background: var(--samba-blue); }
+        .step.active::before { background: var(--samba-blue); border: 2px solid white; box-shadow: 0 0 0 2px var(--samba-blue); }
         .step.completed { color: #22c55e; }
-        .step.completed::before { background: #22c55e; content: "✓"; color: white; line-height: 20px; }
+        .step.completed::before { background: #22c55e; content: "✓"; color: white; line-height: 18px; font-size: 12px; }
+        .step.completed:not(:last-child)::after { background: #22c55e; }
 
-        .notif-paiement { background: #dcfce7; color: #166534; padding: 20px; border-radius: 12px; margin-bottom: 30px; display: none; border: 1px solid #22c55e; font-size: 16px; }
+        .notif-paiement { background: #dcfce7; color: #166534; padding: 15px; border-radius: 12px; margin-bottom: 30px; display: none; border: 1px solid #22c55e; font-size: 14px; }
 
-        /* --- AJOUT : STYLE DE LA FEUILLE DE CONTRAT --- */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; }
-        .feuille-papier { background: white; width: 450px; padding: 40px; border-radius: 2px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Courier New', monospace; position: relative; border-top: 8px solid var(--samba-blue); }
-        .ligne-pointillee { border-bottom: 1px dotted #ccc; margin: 15px 0; display: flex; justify-content: space-between; }
+        /* FEUILLE DE CONTRAT RESPONSIVE */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 10px; }
+        .feuille-papier { background: white; width: 100%; max-width: 450px; padding: 30px; border-radius: 2px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Courier New', monospace; position: relative; border-top: 8px solid var(--samba-blue); box-sizing: border-box; }
+        .ligne-pointillee { border-bottom: 1px dotted #ccc; margin: 15px 0; display: flex; justify-content: space-between; font-size: 13px; }
+
+        @media (max-width: 480px) {
+            h2 { font-size: 20px; }
+            .stat-card { padding: 15px; }
+            .stat-card strong { font-size: 16px !important; }
+            .ligne-pointillee span { font-size: 11px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <img src="Logo Samba.jpeg" width="120">
-        <div>
-            <a href="contra-samba.html" class="btn-principal" style="background: #22c55e;">+ Nouvelle Souscription</a>
-            <a href="declarer-sinistre.html" class="btn-principal">+ Déclarer un Sinistre</a>
+        <img src="Logo Samba.jpeg" alt="Logo">
+        <div class="btn-group">
+            <a href="contra-samba.html" class="btn-principal" style="background: #22c55e;">+ Souscription</a>
+            <a href="declarer-sinistre.html" class="btn-principal">+ Sinistre</a>
         </div>
     </div>
 
@@ -50,14 +68,14 @@
          <strong>Bonne nouvelle !</strong> Votre dédommagement a été validé et le virement a été effectué sur votre compte.
     </div>
 
-    <div style="margin-bottom: 40px;">
+    <div style="margin-bottom: 30px;">
         <h2>Mes Contrats Actifs</h2>
         <div id="liste-contrats-client" class="stats-grid">
             <p style="color: #64748b;">Chargement de vos contrats...</p>
         </div>
     </div>
 
-    <h2>Mes Déclarations (Suivi)</h2>
+    <h2>Mes Déclarations</h2>
     <div id="liste-suivi">
         <p>Chargement de vos dossiers...</p>
     </div>
@@ -66,22 +84,21 @@
 <div id="maFicheContrat" class="modal-overlay" onclick="this.style.display='none'">
     <div class="feuille-papier" onclick="event.stopPropagation()">
         <h3 style="text-align:center; text-decoration: underline;">CERTIFICAT D'ASSURANCE</h3>
-        <p style="text-align:right; font-size:12px;">Émis le : 17/02/2026</p>
+        <p style="text-align:right; font-size:10px;">Émis le : 18/02/2026</p>
         <div class="ligne-pointillee"><span>POLICE N°:</span> <b id="fiche-id">---</b></div>
         <div class="ligne-pointillee"><span>COMPAGNIE:</span> <b>SAMBA ASSURANCES</b></div>
         <div class="ligne-pointillee"><span>ASSISTEUR:</span> <b>AFRICA FIRST ASSIST</b></div>
         <div class="ligne-pointillee"><span>ZONE:</span> <b>INTERNATIONAL</b></div>
         <div class="ligne-pointillee"><span>STATUT:</span> <b style="color:green;">VALIDE / PAYÉ</b></div>
         
-        <div style="margin-top:40px; font-size:11px; font-style:italic;">
+        <div style="margin-top:30px; font-size:11px; font-style:italic; line-height: 1.4;">
             "Ce document confirme que le porteur bénéficie d'une couverture assistance voyage complète gérée par AFA."
         </div>
-        <button onclick="document.getElementById('maFicheContrat').style.display='none'" style="margin-top:30px; width:100%; padding:10px; cursor:pointer;">FERMER LE DOCUMENT</button>
+        <button onclick="document.getElementById('maFicheContrat').style.display='none'" style="margin-top:30px; width:100%; padding:12px; cursor:pointer; background: #f1f5f9; border: 1px solid #cbd5e1; font-weight: bold;">FERMER LE DOCUMENT</button>
     </div>
 </div>
 
 <script>
-    // --- MODIFICATION : LA FONCTION OUVRE MAINTENANT LA FEUILLE ---
     function voirDetailsContrat(id) {
         document.getElementById('fiche-id').innerText = id;
         document.getElementById('maFicheContrat').style.display = 'flex';
@@ -98,21 +115,20 @@
                 const isPaye = s.statut_afa === 'DÉDOMMAGÉ';
                 if(isPaye) document.getElementById('notif-box').style.display = 'block';
 
-                const card = `
+                container.innerHTML += `
                     <div class="card-sinistre ${isPaye ? 'paye' : 'en-cours'}">
-                        <div style="display:flex; justify-content:space-between;">
+                        <div style="display:flex; justify-content:space-between; font-size:14px;">
                             <strong>Dossier #SIN-${s.id}</strong>
-                            <span>${s.type_incident}</span>
+                            <span style="color: #64748b;">${s.type_incident}</span>
                         </div>
                         <div class="progress-track">
                             <div class="step completed">Déclaré</div>
-                            <div class="step ${s.confirmation_samba ? 'completed' : 'active'}">Validation Samba</div>
-                            <div class="step ${isPaye ? 'completed' : (s.confirmation_samba ? 'active' : '')}">Dédommagement</div>
+                            <div class="step ${s.confirmation_samba ? 'completed' : 'active'}">Samba</div>
+                            <div class="step ${isPaye ? 'completed' : (s.confirmation_samba ? 'active' : '')}">Paiement</div>
                         </div>
-                        ${isPaye ? '<p style="color:#166534; margin-top:15px; font-weight:bold;">✅ Paiement reçu</p>' : ''}
+                        ${isPaye ? '<p style="color:#166534; margin-top:15px; font-weight:bold; font-size:13px;"> Virement effectué</p>' : ''}
                     </div>
                 `;
-                container.innerHTML += card;
             });
         } catch (e) { console.error(e); }
     }
@@ -126,14 +142,15 @@
 
             contrats.forEach(c => {
                 container.innerHTML += `
-                    <div class="stat-card" onclick="voirDetailsContrat('${c.numero_police}')" style="text-align: left; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <strong style="color: var(--samba-blue); font-size: 18px;">${c.numero_police}</strong><br>
-                            <small style="color: #64748b;">📍 Destination: ${c.destination} | 📅 Expire le: ${new Date(c.date_echeance).toLocaleDateString()}</small>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <span style="background: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold;">ACTIF</span>
-                            <span style="color:#cbd5e1">❯</span>
+                    <div class="stat-card" onclick="voirDetailsContrat('${c.numero_police}')">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong style="color: var(--samba-blue); font-size: 17px;">${c.numero_police}</strong><br>
+                                <p style="color: #64748b; font-size: 12px; margin: 5px 0 0 0;">
+                                    📍 ${c.destination} | 📅 Exp: ${new Date(c.date_echeance).toLocaleDateString()}
+                                </p>
+                            </div>
+                            <span style="background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: bold;">ACTIF</span>
                         </div>
                     </div>
                 `;
