@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>À PROPOS | SAMB'A VOYAGE</title>
+  <style>
+    :root { --samba-blue: #0070bb; --samba-dark: #1e293b; --samba-light-blue: #00aaff; }
+    body, html { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; background: #f8fafc; color: var(--samba-dark); }
+    
+    /* Navbar */
+    .navbar { position: fixed; top: 0; width: 100%; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: center; padding: 15px 0; z-index: 2000; border-bottom: 1px solid var(--samba-blue); }
+    .navbar a { color: white; text-decoration: none; margin: 0 20px; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; }
+
+    /* Content */
+    .content { max-width: 900px; margin: 120px auto 30px; padding: 40px; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+    h1 { color: var(--samba-blue); border-bottom: 3px solid var(--samba-blue); display: inline-block; padding-bottom: 10px; margin-bottom: 25px; }
+    h2 { color: var(--samba-blue); font-size: 1.4rem; margin-top: 30px; border-left: 4px solid var(--samba-light-blue); padding-left: 15px; }
+    p { line-height: 1.7; color: #475569; margin-bottom: 15px; }
+    .role-box { background: #f1f5f9; padding: 20px; border-radius: 10px; margin: 15px 0; border: 1px inset rgba(0,0,0,0.05); }
+    .role-title { font-weight: 800; color: var(--samba-dark); display: block; margin-bottom: 5px; text-transform: uppercase; font-size: 0.9rem; }
+
+    /* STYLE DU BOUTON RETOUR */
+    .btn-back { display: block; width: fit-content; margin: 40px auto 20px; padding: 12px 25px; background: var(--samba-blue); color: white; text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s; text-transform: uppercase; font-size: 14px; }
+    .btn-back:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+    /* Footer Style */
+    footer { background: #04060b; color: white; padding: 60px 20px 30px 20px; border-top: 5px solid var(--samba-blue); }
+    .footer-content { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
+    .footer-section h4 { color: var(--samba-light-blue); margin-bottom: 20px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+    .footer-section p, .footer-section li { font-size: 13px; color: #cbd5e1; list-style: none; margin-bottom: 10px; padding: 0; line-height: 1.6; }
+    .emergency-btn { background: #ff4500; color: white; padding: 12px; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 12px; transition: 0.3s; }
+    .footer-bottom { text-align: center; margin-top: 50px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 11px; color: #64748b; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html">Accueil</a>
+    <a href="a-propos.html">À Propos</a>
+    <a href="faq.html">FAQ</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+
+  <div class="content">
+    <h1>À propos du projet</h1>
+    
+    <p><strong>SAMB'A VOYAGE</strong> est une solution technologique de pointe conçue pour simplifier et sécuriser la mobilité internationale des citoyens gabonais et des résidents de la zone CIMA.</p>
+
+    <h2>1. Le Logiciel SAMB'A VOYAGE</h2>
+    <p>Véritable écosystème numérique, le logiciel permet une gestion de bout en bout du cycle de l'assurance voyage. Il interconnecte les agences de voyage, les administrateurs et les plateaux d'assistance pour garantir une émission immédiate des polices et une transparence totale sur les garanties souscrites.</p>
+
+    <h2>2. Samba Assurances : Le Porteur du Projet</h2>
+    <div class="role-box">
+      <span class="role-title">Rôle : Assureur Conseil & Gestionnaire</span>
+      <p>Première micro-assurance au Gabon, <strong>Samba Assurances</strong> apporte la solidité financière et l'expertise technique. Son rôle est de concevoir des produits adaptés aux réalités locales tout en respectant les normes internationales (notamment pour les visas Schengen).</p>
+    </div>
+
+    <h2>3. Africa First Assist (AFA) : Le Partenaire Opérationnel</h2>
+    <div class="role-box">
+      <span class="role-title">Rôle : Assistance Mondiale & Logistique Médicale</span>
+      <p><strong>AFA</strong> est le bras armé opérationnel de Samba Voyage à l'étranger. Grâce à son expertise en régulation médicale et son réseau mondial, AFA garantit aux assurés une prise en charge 24h/24, l'envoi de garanties de paiement aux hôpitaux et l'organisation des rapatriements sanitaires depuis n'importe quel point du globe.</p>
+    </div>
+
+    <p style="margin-top:25px; border-top: 1px solid #eee; padding-top: 20px;">
+      Cet accord tripartite entre <strong>Technologie, Assurance et Assistance</strong> fait de Samba Voyage la plateforme la plus fiable du marché gabonais.
+    </p>
+    
+    <a href="index.html" class="btn-back">← Retour à l'accueil</a>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <img src="samb-assurances.png" width="100" alt="Samba Logo" style="margin-bottom: 20px; display: block;">
+        <h4>Samba Assurances</h4>
+        <p>La 1ère micro-assurance au Gabon et en Afrique Centrale, protégeant vos déplacements sur les 2 continents.</p>
+      </div>
+      <div class="footer-section">
+        <h4>Couvertures</h4>
+        <ul>
+          <li>Visa Schengen</li>
+          <li>AFRIQUE & FRANCE</li>
+          <li>Voyage d'affaire</li>
+          <li>Études & Stages</li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Légal</h4>
+        <ul>
+          <li>Conditions Générales</li>
+          <li>Mentions Légales</li>
+          <li>Confidentialité</li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Assistance Urgence</h4>
+        <p style="font-size: 15px; font-weight: bold; margin-bottom: 15px;">+241 60086262</p>
+        <button class="emergency-btn" onclick="alert('Ligne d\'urgence active: +241 60086262')">PLATEAU CIMA-EUROPE 24H/24</button>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 Samb'a Assurances SA - Système Samba Voyage v2.4 <br>
+      Développé pour la performance et la sécurité.
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CONTACT | SAMB'A VOYAGE</title>
+  <style>
+    :root { --samba-blue: #0070bb; --samba-dark: #1e293b; --samba-light-blue: #00aaff; }
+    body, html { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; background: #f8fafc; }
+    
+    /* Navbar */
+    .navbar { position: fixed; top: 0; width: 100%; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: center; padding: 15px 0; z-index: 2000; border-bottom: 1px solid var(--samba-blue); }
+    .navbar a { color: white; text-decoration: none; margin: 0 20px; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; }
+    
+    /* Content */
+    .content { max-width: 900px; margin: 120px auto 30px; padding: 40px; background: white; border-radius: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+    h1 { color: var(--samba-blue); margin-bottom: 25px; }
+    
+    .contact-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 30px; text-align: left; }
+    .contact-card { padding: 20px; border-radius: 12px; background: #f1f5f9; border: 1px solid #e2e8f0; }
+    .contact-card h3 { color: var(--samba-blue); font-size: 1.1rem; margin-top: 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+    .contact-info { font-size: 1rem; margin: 10px 0; color: var(--samba-dark); text-decoration: none; display: block; }
+    .contact-info a { color: var(--samba-blue); text-decoration: none; font-weight: bold; }
+
+    /* Style Bouton Retour */
+    .btn-back { display: block; width: fit-content; margin: 30px auto 10px; padding: 12px 25px; background: var(--samba-blue); color: white; text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s; text-transform: uppercase; font-size: 14px; }
+    .btn-back:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+    /* Footer */
+    footer { background: #04060b; color: white; padding: 60px 20px 30px 20px; border-top: 5px solid var(--samba-blue); }
+    .footer-content { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; text-align: left; }
+    .footer-section h4 { color: var(--samba-light-blue); margin-bottom: 20px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+    .footer-section p, .footer-section li { font-size: 13px; color: #cbd5e1; list-style: none; margin-bottom: 10px; padding: 0; line-height: 1.6; }
+    .emergency-btn { background: #ff4500; color: white; padding: 12px; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 12px; transition: 0.3s; }
+    .footer-bottom { text-align: center; margin-top: 50px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 11px; color: #64748b; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html">Accueil</a>
+    <a href="a-propos.html">À Propos</a>
+    <a href="faq.html">FAQ</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+
+  <div class="content">
+    <h1>Contactez-nous</h1>
+    <p>Nos équipes sont à votre disposition pour toute question relative à votre contrat ou pour une assistance immédiate.</p>
+
+    <div class="contact-container">
+      <div class="contact-card">
+        <h3> Notre Siège</h3>
+        <p class="contact-info">Structure Samba Assurances<br>Centre-ville, Libreville, Gabon</p>
+        <p class="contact-info"><strong>Horaires :</strong><br>Lundi - Vendredi : 08h00 - 16h30<br>Samedi : 09h00 - 12h00</p>
+      </div>
+
+      <div class="contact-card">
+        <h3> Support Client</h3>
+        <p class="contact-info">Email : <a href="mailto:contact@samba-assurances.com">contact@samba-assurances.com</a></p>
+        <p class="contact-info">Commercial : <a href="tel:+241011724424">+241 60086262</a></p>
+      </div>
+
+      <div class="contact-card" style="border-color: #ff4500; background: #fff5f2;">
+        <h3> Assistance 24h/24</h3>
+        <p class="contact-info">En cas de sinistre à l'étranger :</p>
+        <p class="contact-info"><a href="tel: +212 522 97 47 47" style="font-size: 1.3rem; color: #ff4500;"> +212 522 97 47 47</a></p>
+        <p style="font-size: 0.8rem; font-style: italic;">(Ligne internationale Africa First Assist)</p>
+      </div>
+    </div>
+    
+    <a href="index.html" class="btn-back">← Retour à l'accueil</a>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <img src="samb-assurances.png" width="100" alt="Samba Logo" style="margin-bottom: 20px; display: block;">
+        <h4>Samba Assurances</h4>
+        <p>La 1ère micro-assurance au Gabon et en Afrique Centrale, protégeant vos déplacements sur les 2 continents.</p>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Couvertures</h4>
+        <ul>
+          <li>Visa Schengen</li>
+          <li>AFRIQUE & FRANCE</li>
+          <li>Voyage d'affaire</li>
+          <li>Études & Stages</li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Légal</h4>
+        <ul>
+          <li>Conditions Générales</li>
+          <li>Mentions Légales</li>
+          <li>Confidentialité</li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Assistance Urgence</h4>
+        <p style="font-size: 15px; font-weight: bold; margin-bottom: 15px;">+241 60086262</p>
+        <button class="emergency-btn" onclick="alert('Ligne d\'urgence active: +241 60086262')">PLATEAU CIMA-EUROPE 24H/24</button>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      &copy; 2026 Samb'a Assurances SA - Système Samba Voyage v2.4 <br>
+      Développé pour la performance et la sécurité.
+    </div>
+  </footer>
+
+</body>
+</html>

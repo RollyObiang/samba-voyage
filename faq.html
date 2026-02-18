@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ | SAMB'A VOYAGE</title>
+  <style>
+    :root { --samba-blue: #0070bb; --samba-dark: #1e293b; --samba-light-blue: #00aaff; }
+    body, html { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; background: #f8fafc; color: var(--samba-dark); }
+    
+    /* Navbar */
+    .navbar { position: fixed; top: 0; width: 100%; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: center; padding: 15px 0; z-index: 2000; border-bottom: 1px solid var(--samba-blue); }
+    .navbar a { color: white; text-decoration: none; margin: 0 20px; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; }
+
+    /* Content */
+    .content { max-width: 900px; margin: 120px auto 30px; padding: 40px; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+    h1 { color: var(--samba-blue); border-bottom: 3px solid var(--samba-blue); display: inline-block; padding-bottom: 10px; margin-bottom: 30px; }
+    
+    .faq-item { margin-bottom: 30px; border-left: 4px solid var(--samba-blue); padding-left: 20px; }
+    .faq-q { font-size: 1.2rem; font-weight: 800; color: var(--samba-blue); margin-bottom: 10px; }
+    .faq-a { font-size: 1rem; color: #475569; line-height: 1.6; }
+    .faq-a ul { padding-left: 20px; margin-top: 10px; }
+    
+    .btn-back { display: block; width: fit-content; margin: 40px auto 10px; padding: 12px 25px; background: var(--samba-blue); color: white; text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s; text-transform: uppercase; font-size: 14px; }
+    .btn-back:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+    /* Footer Style Screen-Inspiré */
+    footer { background: #04060b; color: white; padding: 60px 20px 30px 20px; border-top: 5px solid var(--samba-blue); }
+    .footer-content { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
+    .footer-section h4 { color: var(--samba-light-blue); margin-bottom: 20px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+    .footer-section p, .footer-section li { font-size: 13px; color: #cbd5e1; list-style: none; margin-bottom: 10px; padding: 0; line-height: 1.6; }
+    
+    .emergency-btn { background: #ff4500; color: white; padding: 12px; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 12px; transition: 0.3s; }
+    .emergency-btn:hover { background: #e63e00; transform: scale(1.02); }
+    .footer-bottom { text-align: center; margin-top: 50px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 11px; color: #64748b; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html">Accueil</a>
+    <a href="a-propos.html">À Propos</a>
+    <a href="faq.html">FAQ</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  
+  <div class="content">
+    <h1>Questions Fréquentes</h1>
+
+    <div class="faq-item">
+      <div class="faq-q">1. Comment souscrire à une assurance voyage ?</div>
+      <div class="faq-a">
+        La souscription est simple et rapide :
+        <ul>
+          <li><strong>En ligne :</strong> Cliquez sur "ESPACE CLIENT" sur l'accueil, remplissez vos informations de voyage et payez via les solutions mobiles disponibles.</li>
+          <li><strong>En Agence :</strong> Rendez-vous dans l'un de nos points de vente munis de votre passeport.</li>
+          <li><strong>Documents requis :</strong> Une copie de votre passeport et vos dates de voyage précises.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">2. Comment faire une déclaration de sinistre ?</div>
+      <div class="faq-a">
+        Grâce à notre partenariat exclusif avec <strong>Africa First Assist (AFA)</strong>, votre prise en charge est coordonnée en temps réel :
+        <ul>
+          <li><strong>Alerte Immédiate :</strong> Contactez le plateau technique AFA au <strong>+241 60 08 62 62</strong> dès la survenance de l'incident.</li>
+          <li><strong>Réseau Direct :</strong> Ne payez rien d'avance ! AFA active son réseau de prestataires mondiaux pour délivrer une <i>Garantie de Paiement (GOP)</i>.</li>
+          <li><strong>Pièces à fournir :</strong> Votre numéro de police Samba, votre localisation et les coordonnées du médecin traitant.</li>
+        </ul>
+        <p style="font-size: 0.9rem; font-style: italic; margin-top: 10px; color: var(--samba-blue);">
+          Note : Toute dépense engagée sans l'accord préalable de la plateforme AFA pourrait ne pas être remboursée.
+        </p>
+      </div>
+    </div>
+
+    <a href="index.html" class="btn-back">← Retour à l'accueil</a>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <img src="samb-assurances.png" width="100" alt="Samba Logo" style="margin-bottom: 20px; display: block;">
+        <h4>Samba Assurances</h4>
+        <p>La 1ère micro-assurance au Gabon et en Afrique Centrale, protégeant vos déplacements sur les 2 continents.</p>
+      </div>
+      <div class="footer-section">
+        <h4>Couvertures</h4>
+        <ul>
+          <li>Visa Schengen</li>
+          <li>AFRIQUE & FRANCE</li>
+          <li>Voyage d'affaire</li>
+          <li>Études & Stages</li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Légal</h4>
+        <ul>
+          <li>Conditions Générales</li>
+          <li>Mentions Légales</li>
+          <li>Confidentialité</li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Assistance Urgence</h4>
+        <p style="font-size: 15px; font-weight: bold; margin-bottom: 15px;">+241 60086262</p>
+        <button class="emergency-btn" onclick="alert('Ligne d\'urgence active: +241 60086262')">PLATEAU CIMA-EUROPE 24H/24</button>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 Samb'a Assurances SA - Système Samba Voyage v2.4 <br>
+      Développé pour la performance et la sécurité.
+    </div>
+  </footer>
+
+</body>
+</html>
