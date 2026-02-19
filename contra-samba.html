@@ -62,29 +62,58 @@
         .btn-print { padding: 12px 20px; background: var(--samba-blue); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; flex: 1; max-width: 200px; }
         .btn-validate { padding: 12px 20px; background: var(--samba-green); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; flex: 1; max-width: 200px; }
 
+        /* --- AJOUT : STYLE DE LA MODAL PAIEMENT --- */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 3000; 
+            left: 0; top: 0; width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.5); 
+            backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 25px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        .payment-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .pay-btn {
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .pay-btn:hover { border-color: var(--samba-green); background: #f0fdf4; }
+        .pay-btn span { font-size: 12px; font-weight: bold; display: block; margin-top: 5px; }
+
         /* --- MEDIA QUERIES MOBILE --- */
         @media (max-width: 600px) {
             body { padding: 0; }
             .a4-page { padding: 15px; box-shadow: none; }
-            
-            /* On empile les colonnes des tableaux pour la lecture mobile */
             .header-table tr { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; }
             .serial-number { text-align: center; width: 100%; }
-            
             .form-table tr { display: flex; flex-direction: column; border-bottom: 2px solid #475569; }
             .form-table td { border: none; width: 100% !important; box-sizing: border-box; }
             .section-label { background: #e2e8f0; border-bottom: 1px solid #475569 !important; }
-
             .signature-section { flex-direction: column; align-items: center; text-align: center; }
             .signature-box { max-width: 100%; }
         }
 
-        /* --- IMPRESSION --- */
         @media print { 
             .no-print { display: none; } 
             body { background: white; padding: 0; } 
             .a4-page { width: 800px; box-shadow: none; border: none; padding: 40px; } 
-            /* On force le layout table pour l'impression même si on est sur petit écran */
             .form-table tr { display: table-row; }
             .form-table td { display: table-cell; border: 1px solid #475569 !important; }
         }
@@ -101,7 +130,7 @@
                     <p>Contrat régi par le Code des assurances CIMA</p>
                     <div style="font-weight: bold; margin-top: 10px;">CONDITIONS PARTICULIERES</div>
                 </td>
-                <td width="20%" class="serial-number" id="police-display">#PROVISOIRE</td>
+                <td width="20%" class="serial-number" id="police-display"></td>
             </tr>
         </table>
 
@@ -166,61 +195,118 @@
         <button onclick="validerContrat()" class="btn-validate">Valider & Enregistrer</button>
     </div>
 
+    <div id="paymentModal" class="modal no-print">
+        <div class="modal-content">
+            <h3 style="margin-top:0;">Mode de paiement</h3>
+            <p style="font-size: 14px;">Montant : <span id="modal_amount" style="font-weight:bold; color:var(--samba-green);"></span> FCFA</p>
+            <div class="payment-options">
+                <div class="pay-btn" onclick="finaliserTout('Airtel Money')">
+                    <div style="font-size: 24px;">📱</div><span>Airtel Money</span>
+                </div>
+                <div class="pay-btn" onclick="finaliserTout('Moov Money')">
+                    <div style="font-size: 24px;">📲</div><span>Moov Money</span>
+                </div>
+                <div class="pay-btn" onclick="finaliserTout('Espèces')">
+                    <div style="font-size: 24px;">💵</div><span>Espèces</span>
+                </div>
+                <div class="pay-btn" onclick="document.getElementById('paymentModal').style.display='none'">
+                    <div style="font-size: 24px;">❌</div><span>Annuler</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        function mettreAJourZone() {
-            const zone = document.getElementById('zone_select').value;
-            const destSelect = document.getElementById('destination_select');
-            const totalField = document.getElementById('total_ttc');
-            destSelect.innerHTML = '';
-            
-            if (zone === "2") {
-                const pays = ["Bénin", "Cameroun", "Congo", "Côte d'Ivoire", "Sénégal", "Togo"];
-                pays.forEach(p => destSelect.innerHTML += `<option value="${p}">${p}</option>`);
-                totalField.value = 27000;
-            } else if (zone === "3") {
-                destSelect.innerHTML = `<option value="France">France / Europe</option>`;
-                totalField.value = 52500;
-            } else {
-                destSelect.innerHTML = `<option value="Gabon">Gabon</option>`;
-                totalField.value = 15000;
-            }
+    function mettreAJourZone() {
+        const zone = document.getElementById('zone_select').value;
+        const destSelect = document.getElementById('destination_select');
+        const totalField = document.getElementById('total_ttc');
+        destSelect.innerHTML = '';
+        
+        if (zone === "2") {
+            const pays = ["Bénin", "Cameroun", "Congo", "Côte d'Ivoire", "Sénégal", "Togo"];
+            pays.forEach(p => destSelect.innerHTML += `<option value="${p}">${p}</option>`);
+            totalField.value = 27000;
+        } else if (zone === "3") {
+            destSelect.innerHTML = `<option value="France">France / Europe</option>`;
+            totalField.value = 52500;
+        } else {
+            destSelect.innerHTML = `<option value="Gabon">Gabon</option>`;
+            totalField.value = 15000;
+        }
+    }
+
+    function verifierAge() {
+        const birthDate = new Date(document.getElementById('date_naissance').value);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        if (today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())) age--;
+        document.getElementById('age_error').innerText = (age > 60) ? "Âge limite (60 ans) dépassé !" : "";
+    }
+
+    // Affiche la modal au lieu d'envoyer directement
+    function validerContrat() {
+        const nom = document.getElementById('nom_souscripteur').value;
+        const montant = document.getElementById('total_ttc').value;
+
+        if(!nom || !montant) {
+            alert("Veuillez remplir les informations du souscripteur.");
+            return;
         }
 
-        function verifierAge() {
-            const birthDate = new Date(document.getElementById('date_naissance').value);
-            const today = new Date();
-            let age = today.getFullYear() - birthDate.getFullYear();
-            if (today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())) age--;
-            document.getElementById('age_error').innerText = (age > 60) ? "Âge limite (60 ans) dépassé !" : "";
-        }
+        document.getElementById('modal_amount').innerText = montant;
+        document.getElementById('paymentModal').style.display = 'block';
+    }
 
-        async function validerContrat() {
-            const donnees = {
-                souscripteur_nom: document.getElementById('nom_souscripteur').value,
-                passport_numero: document.getElementById('num_passeport').value,
-                date_effet: document.getElementById('date_effet').value,
-                date_echeance: document.getElementById('date_echeance').value,
-                destination: document.getElementById('destination_select').value,
-                statut_police: 'Validé',
-                agence_id: 1,
-                produit_id: document.getElementById('zone_select').value
-            };
+    // Fonction finale qui enregistre Contrat + Paiement
+    async function finaliserTout(modePaiement) {
+        document.getElementById('paymentModal').style.display = 'none';
+        
+        const donneesContrat = {
+            souscripteur_nom: document.getElementById('nom_souscripteur').value,
+            passport_numero: document.getElementById('num_passeport').value,
+            date_effet: document.getElementById('date_effet').value,
+            date_echeance: document.getElementById('date_echeance').value,
+            destination: document.getElementById('destination_select').value,
+            statut_police: 'Validé',
+            agence_id: 1, 
+            produit_id: document.getElementById('zone_select').value
+        };
 
-            try {
-                const res = await fetch('http://localhost:3000/api/creer-contrat', {
+        try {
+            // 1. Créer le contrat
+            const resContrat = await fetch('http://localhost:3000/api/creer-contrat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(donneesContrat)
+            });
+
+            if (resContrat.ok) {
+                const dataContrat = await resContrat.json();
+                
+                // 2. Créer le paiement lié
+                const donneesPaiement = {
+                    id_contrat: dataContrat.id, // Assure-toi que ton backend renvoie l'ID
+                    montant: document.getElementById('total_ttc').value,
+                    mode_paiement: modePaiement,
+                    ref_transaction: 'SV-PAY-' + Date.now()
+                };
+
+                await fetch('http://localhost:3000/api/valider-paiement', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(donnees)
+                    body: JSON.stringify(donneesPaiement)
                 });
-                if (res.ok) {
-                    const data = await res.json();
-                    alert("Succès ! Police : " + data.numero_police);
-                    window.location.href = 'dashboard-agence.html';
-                }
-            } catch (e) { alert("Erreur de connexion au serveur."); }
-        }
 
-        mettreAJourZone();
-    </script>
+                alert("Succès ! Police " + dataContrat.numero_police + " validée et payée.");
+                window.location.href = 'dashboard-agence.html';
+            }
+        } catch (e) { 
+            alert("Erreur de connexion au serveur."); 
+        }
+    }
+
+    mettreAJourZone();
+</script>
 </body>
 </html>

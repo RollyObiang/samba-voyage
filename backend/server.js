@@ -76,7 +76,7 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-
+// --- ROUTE CORRIGÉE ICI ---
 app.post('/api/creer-contrat', async (req, res) => {
     try {
         const { 
@@ -85,19 +85,21 @@ app.post('/api/creer-contrat', async (req, res) => {
             agence_id, produit_id 
         } = req.body;
 
+        // J'ai remplacé les "..." par la vraie requête SQL ci-dessous
         const result = await pool.query(
             `INSERT INTO polices_assurance 
             (souscripteur_nom, passeport_numero, date_effet, date_echeance, destination, statut_police, agence_id, produit_id, cree_le) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW()) RETURNING numero_police`,
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW()) 
+            RETURNING id, numero_police`,
             [souscripteur_nom, passport_numero, date_effet, date_echeance, destination, statut_police, agence_id, produit_id]
         );
 
         res.status(201).json({ 
-            message: "Contrat validé", 
+            id: result.rows[0].id, 
             numero_police: result.rows[0].numero_police 
         });
     } catch (err) {
-        console.error(err.message);
+        console.error("Erreur SQL Contrat:", err.message);
         res.status(500).json({ error: err.message });
     }
 });
@@ -178,6 +180,45 @@ app.patch('/api/valider-samba/:id', async (req, res) => {
         await pool.query("UPDATE sinistres SET confirmation_samba = TRUE, statut_afa = 'CONFIRME_SAMBA' WHERE id = $1", [id]);
         res.json({ message: "Dossier confirmé par Samba" });
     } catch (err) { res.status(500).send(err.message); }
+});
+
+// --- NOUVELLE ROUTE : ENREGISTREMENT DU PAIEMENT ---
+app.post('/api/valider-paiement', async (req, res) => {
+    const client = await pool.connect(); 
+    try {
+        // On récupère les noms envoyés par le frontend
+        const { id_contrat, montant, mode_paiement, ref_transaction } = req.body;
+
+        await client.query('BEGIN'); 
+
+        // 1. Insertion dans la table paiement avec VOS noms de colonnes exacts
+        const insertPaiement = `
+            INSERT INTO paiement (id_contrat, montant, mode_paiement, ref_transaction, statut_paiement, date_paiement) 
+            VALUES ($1, $2, $3, $4, 'Succès', NOW()) RETURNING *`;
+        
+        const resPaiement = await client.query(insertPaiement, [id_contrat, montant, mode_paiement, ref_transaction]);
+
+        // 2. Mettre à jour le statut de la police d'assurance
+        const updatePolice = `
+            UPDATE polices_assurance 
+            SET statut_police = 'VALIDE' 
+            WHERE id = $1`;
+        await client.query(updatePolice, [id_contrat]);
+
+        await client.query('COMMIT'); 
+
+        res.status(201).json({ 
+            message: "Paiement réussi et contrat activé", 
+            paiement: resPaiement.rows[0] 
+        });
+
+    } catch (err) {
+        await client.query('ROLLBACK'); 
+        console.error("Erreur paiement :", err.message);
+        res.status(500).json({ error: "Erreur SQL : " + err.message });
+    } finally {
+        client.release();
+    }
 });
 
 // Route pour afficher les sinistres sur le portail AFA
